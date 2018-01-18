@@ -8,9 +8,15 @@ const Otsikko = (props) => {
     )
 }
 
+const Osa = (props, key) => {
+    return (
+        <p key={key}>{props.osa} {props.tehtava}</p>
+    )
+}
+
 const Sisalto = (props) => {
     return props.sisalto.map((rivi, i) =>
-        <p key={i}>{rivi.osa} {rivi.tehtava}</p>
+        <Osa key={i} osa={rivi.osa} tehtava={rivi.tehtava}/>
     )
 }
 
