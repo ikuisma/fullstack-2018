@@ -4,7 +4,7 @@ import './index.css';
 
 const Otsikko = (props) => {
     return (
-        <h1>{props.title}</h1>
+        <h1>{props.kurssi}</h1>
     )
 }
 
@@ -15,13 +15,13 @@ const Osa = (props, key) => {
 }
 
 const Sisalto = (props) => {
-    return props.sisalto.map((rivi, i) =>
+    return props.osat.map((rivi, i) =>
         <Osa key={i} osa={rivi.osa} tehtava={rivi.tehtava}/>
     )
 }
 
 const Yhteensa = (props) => {
-    const yhteensa = props.sisalto.map(element => element.tehtava).reduce((prev, curr) => prev + curr)
+    const yhteensa = props.osat.map(element => element.tehtava).reduce((prev, curr) => prev + curr)
     return (
         <p>yhteensä {yhteensa} tehtävää</p>
     )
@@ -32,17 +32,19 @@ function rivi(osa, tehtava) {
 }
 
 const App = () => {
-    const kurssi = 'Half Stack -sovelluskehitys'
-    const sisalto = [
-        rivi('Reactin perusteet', 10),
-        rivi('Tiedonvälitys propseilla', 7),
-        rivi('Komponenttien tila', 14)
-    ]
+    const kurssi = {
+        nimi : 'Half Stack -sovelluskehitys',
+        osat : [
+            rivi('Reactin perusteet', 10),
+            rivi('Tiedonvälitys propseilla', 7),
+            rivi('Komponenttien tila', 14)
+        ]
+    }
     return (
         <div>
-            <Otsikko title={kurssi}/>
-            <Sisalto sisalto={sisalto}/>
-            <Yhteensa sisalto={sisalto}/>
+            <Otsikko kurssi={kurssi.nimi}/>
+            <Sisalto osat={kurssi.osat}/>
+            <Yhteensa osat={kurssi.osat}/>
         </div>
     )
 }
