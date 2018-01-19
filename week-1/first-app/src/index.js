@@ -27,7 +27,7 @@ const Yhteensa = (props) => {
     )
 }
 
-function rivi(osa, tehtava) {
+const rivi = function(osa, tehtava) {
     return {'osa': osa, 'tehtava': tehtava}
 }
 
