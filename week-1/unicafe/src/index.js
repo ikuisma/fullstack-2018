@@ -22,6 +22,24 @@ const Statistiikka = ({good, neutral, bad}) => (
         </div>
 )
 
+const Average = ({good, neutral, bad}) => {
+    const average = (good - bad) / (good + neutral + bad)
+    return (
+        <div>
+            <p>keskiarvo {average}</p>
+        </div>
+    )
+}
+
+const Positiivisia = ({good, neutral, bad}) => {
+    const percentage = (good) / (good + neutral + bad) * 100
+    return (
+        <div>
+            <p>positiivisia {percentage} %</p>
+        </div>
+    )
+}
+
 class App extends React.Component {
     constructor(props) {
         super(props)
@@ -44,8 +62,9 @@ class App extends React.Component {
             <div>
                 <Palaute handleGood={this.increaseGood} handleNeutral={this.increaseNeutral} handleBad={this.increaseBad}/>
                 <Statistiikka good={this.state.good} bad={this.state.bad} neutral={this.state.neutral}/>
+                <Average good={this.state.good} bad={this.state.bad} neutral={this.state.neutral}/>
+                <Positiivisia good={this.state.good} bad={this.state.bad} neutral={this.state.neutral}/>
             </div>
-
         )
     }
 }
