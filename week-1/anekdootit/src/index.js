@@ -14,19 +14,28 @@ class App extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            selected: 0
+            selected: 0,
+            votes: new Array(anecdotes.length).fill(0)
         }
     }
 
     randomPickSelected = () => {
-        const maxIndex = anecdotes.length - 1
+        const maxIndex = this.props.anecdotes.length - 1
         this.setState({selected: randomExcluding(maxIndex, this.state.selected)})
+    }
+
+    voteFor = (index) => () => {
+        let votes = this.state.votes
+        votes[index] = votes[index] + 1
+        this.setState({votes: votes})
     }
 
     render() {
         return (
             <div>
                 <p>{this.props.anecdotes[this.state.selected]}</p>
+                <p>has {this.state.votes[this.state.selected]} votes</p>
+                <button onClick={this.voteFor(this.state.selected)}>vote</button>
                 <button onClick={this.randomPickSelected}>next anecdote</button>
             </div>
         )
