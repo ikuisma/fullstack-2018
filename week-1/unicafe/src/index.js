@@ -2,43 +2,24 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-const Palaute = ({handleGood, handleNeutral, handleBad}) => (
-    <div>
-        <h2>anna palautetta</h2>
-        <div>
-            <button onClick={handleGood}>hyvä</button>
-            <button onClick={handleNeutral}>neutraali</button>
-            <button onClick={handleBad}>huono</button>
-        </div>
-    </div>
-)
+const Button = ({name, handleClick}) => (<button onClick={handleClick}>{name}</button>)
 
-const Statistiikka = ({good, neutral, bad}) => (
-        <div>
-            <h2>statistiikka</h2>
-            <p>hyvä {good}</p>
-            <p>neutraali {neutral}</p>
-            <p>huono {bad}</p>
-        </div>
-)
-
-const Average = ({good, neutral, bad}) => {
-    const average = (good - bad) / (good + neutral + bad)
+const Statistics = ({good, neutral, bad}) => {
+    const total = good + neutral + bad
+    const average = (total !== 0) ? (good - bad) / total : '—'
+    const positives = (total !== 0) ? (good / total * 100) + '%' : '—'
     return (
         <div>
-            <p>keskiarvo {average}</p>
+            <Statistic name="hyvä" value={good}/>
+            <Statistic name="neutraali" value={neutral}/>
+            <Statistic name="huono" value={bad}/>
+            <Statistic name="keskiarvo" value={average}/>
+            <Statistic name="positiivisia" value={positives}/>
         </div>
     )
 }
 
-const Positiivisia = ({good, neutral, bad}) => {
-    const percentage = (good) / (good + neutral + bad) * 100
-    return (
-        <div>
-            <p>positiivisia {percentage} %</p>
-        </div>
-    )
-}
+const Statistic = ({name, value}) => (<p>{name} {value}</p>)
 
 class App extends React.Component {
     constructor(props) {
@@ -60,10 +41,14 @@ class App extends React.Component {
     render() {
         return (
             <div>
-                <Palaute handleGood={this.increaseGood} handleNeutral={this.increaseNeutral} handleBad={this.increaseBad}/>
-                <Statistiikka good={this.state.good} bad={this.state.bad} neutral={this.state.neutral}/>
-                <Average good={this.state.good} bad={this.state.bad} neutral={this.state.neutral}/>
-                <Positiivisia good={this.state.good} bad={this.state.bad} neutral={this.state.neutral}/>
+                <h2>anna palautetta</h2>
+                <div>
+                    <Button handleClick={this.increaseGood} name="hyvä"/>
+                    <Button handleClick={this.increaseNeutral} name="neutral"/>
+                    <Button handleClick={this.increaseBad} name="huono"/>
+                </div>
+                <h2>statistiikka</h2>
+                <Statistics good={this.state.good} bad={this.state.bad} neutral={this.state.neutral}/>
             </div>
         )
     }
