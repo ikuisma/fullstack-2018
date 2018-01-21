@@ -40,17 +40,14 @@ class App extends React.Component {
             [attribute]: this.state[attribute] + 1
         })
     }
-    increaseGood = this.increaseCount("good")
-    increaseNeutral =  this.increaseCount("neutral")
-    increaseBad = this.increaseCount("bad")
     render() {
         return (
             <div>
                 <h2>anna palautetta</h2>
                 <div>
-                    <Button handleClick={this.increaseGood} name="hyvä"/>
-                    <Button handleClick={this.increaseNeutral} name="neutral"/>
-                    <Button handleClick={this.increaseBad} name="huono"/>
+                    <Button handleClick={this.increaseCount("good")} name="hyvä"/>
+                    <Button handleClick={this.increaseCount("neutral")} name="neutral"/>
+                    <Button handleClick={this.increaseCount("bad")} name="huono"/>
                 </div>
                 <h2>statistiikka</h2>
                 <Statistics good={this.state.good} bad={this.state.bad} neutral={this.state.neutral}/>
