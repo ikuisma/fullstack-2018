@@ -12,19 +12,26 @@ const Statistics = ({good, neutral, bad}) => {
         )
     }
     const average = (good - bad) / total
-    const positives = (good / total * 100) + '%'
+    const positives = (good / total * 100)
     return (
-        <div>
-            <Statistic name="hyvä" value={good}/>
-            <Statistic name="neutraali" value={neutral}/>
-            <Statistic name="huono" value={bad}/>
-            <Statistic name="keskiarvo" value={average}/>
-            <Statistic name="positiivisia" value={positives}/>
-        </div>
+        <table>
+            <tbody>
+                <Statistic name="hyvä" value={good}/>
+                <Statistic name="neutraali" value={neutral}/>
+                <Statistic name="huono" value={bad}/>
+                <Statistic name="keskiarvo" value={average.toFixed(1)}/>
+                <Statistic name="positiivisia" value={positives.toFixed(1) + '%'}/>
+            </tbody>
+        </table>
     )
 }
 
-const Statistic = ({name, value}) => (<p>{name} {value}</p>)
+const Statistic = ({name, value}) => (
+    <tr>
+        <td>{name}</td>
+        <td>{value}</td>
+    </tr>
+)
 
 class App extends React.Component {
     constructor(props) {
