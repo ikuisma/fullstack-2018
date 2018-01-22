@@ -4,12 +4,14 @@ import './index.css';
 
 const Otsikko = ({title}) => (<h1>{title}</h1>)
 
-const Osa = ({name, exercises}) => (<p>{name} {exercises}</p>)
+const Osa = ({text}) => (<p>{text}</p>)
 
 const Sisalto = ({parts}) => {
+    const totalExercises = parts.reduce((acc, part) => acc + part.tehtavia, 0)
     return (
         <div>
-            {parts.map(part => <Osa key={part.id} name={part.nimi} exercises={part.tehtavia}/>)}
+            {parts.map(part => <Osa key={part.id} text={part.nimi + " " + part.tehtavia}/>)}
+            <Osa text={"Yhteensä " + totalExercises + " tehtävää"}/>
         </div>
     )
 }
