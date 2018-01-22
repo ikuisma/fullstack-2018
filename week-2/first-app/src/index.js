@@ -2,49 +2,52 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-const Otsikko = (props) => {
+const Otsikko = ({title}) => (<h1>{title}</h1>)
+
+const Osa = ({name, exercises}) => (<p>{name} {exercises}</p>)
+
+const Sisalto = ({parts}) => {
     return (
-        <h1>{props.kurssi}</h1>
+        <div>
+            {parts.map(part => <Osa key={part.id} name={part.nimi} exercises={part.tehtavia}/>)}
+        </div>
     )
 }
 
-const Osa = (props, key) => {
+const Kurssi = ({kurssi}) => {
     return (
-        <p key={key}>{props.osa} {props.tehtava}</p>
+        <div>
+            <Otsikko title={kurssi.nimi}/>
+            <Sisalto parts={kurssi.osat}/>
+        </div>
     )
-}
-
-const Sisalto = (props) => {
-    return props.osat.map((rivi, i) =>
-        <Osa key={i} osa={rivi.osa} tehtava={rivi.tehtava}/>
-    )
-}
-
-const Yhteensa = (props) => {
-    const yhteensa = props.osat.map(element => element.tehtava).reduce((prev, curr) => prev + curr)
-    return (
-        <p>yhteensä {yhteensa} tehtävää</p>
-    )
-}
-
-const rivi = function(osa, tehtava) {
-    return {'osa': osa, 'tehtava': tehtava}
 }
 
 const App = () => {
     const kurssi = {
-        nimi : 'Half Stack -sovelluskehitys',
-        osat : [
-            rivi('Reactin perusteet', 10),
-            rivi('Tiedonvälitys propseilla', 7),
-            rivi('Komponenttien tila', 14)
+        nimi: 'Half Stack -sovelluskehitys',
+        osat: [
+            {
+                nimi: 'Reactin perusteet',
+                tehtavia: 10,
+                id: 1
+            },
+            {
+                nimi: 'Tiedonvälitys propseilla',
+                tehtavia: 7,
+                id: 2
+            },
+            {
+                nimi: 'Komponenttien tila',
+                tehtavia: 14,
+                id: 3
+            }
         ]
     }
+
     return (
         <div>
-            <Otsikko kurssi={kurssi.nimi}/>
-            <Sisalto osat={kurssi.osat}/>
-            <Yhteensa osat={kurssi.osat}/>
+            <Kurssi kurssi={kurssi} />
         </div>
     )
 }
