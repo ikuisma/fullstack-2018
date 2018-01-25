@@ -25,7 +25,7 @@ class App extends Component {
             return
         }
 
-        const persons = this.state.persons.concat({'name': this.state.newName})
+        const persons = this.state.persons.concat({name: this.state.newName})
         this.setState({
             persons,
             newName: ''
