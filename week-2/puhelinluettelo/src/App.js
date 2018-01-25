@@ -11,10 +11,14 @@ class App extends Component {
         super(props)
         this.state = {
             persons: [
-                { name: 'Arto Hellas', number: '040-123456'}
+                { name: 'Arto Hellas', number: '040-123456' },
+                { name: 'Martti Tienari', number: '040-123456' },
+                { name: 'Arto Järvinen', number: '040-123456' },
+                { name: 'Lea Kutvonen', number: '040-123456' }
             ],
             newName: '',
-            newNumber: ''
+            newNumber: '',
+            filterKeyword: ''
         }
     }
 
@@ -26,6 +30,11 @@ class App extends Component {
     handleNumberChange = (event) => {
         const newNumber = event.target.value
         this.setState({newNumber})
+    }
+
+    handleFilterChange = (event) => {
+        const filterKeyword = event.target.value
+        this.setState({filterKeyword})
     }
 
     personWithNameExists = (name) => this.state.persons.some((person) => person.name === name)
@@ -48,10 +57,24 @@ class App extends Component {
         })
     }
 
+    getFilteredPersons() {
+        if (this.state.filterKeyword.length === 0) {
+            return this.state.persons
+        } else {
+            return this.state.persons.filter((person) => person.name.match(new RegExp(this.state.filterKeyword, "i")))
+        }
+    }
+
     render() {
+        const persons = this.getFilteredPersons()
         return (
             <div>
                 <h2>Puhelinluettelo</h2>
+
+                <div>rajaa näytettäviä <input value={this.state.filterKeyword} onChange={this.handleFilterChange}/></div>
+
+                <h2>Lisää uusi</h2>
+
                 <form onSubmit={this.addPerson}>
                     <div>
                         nimi: <input value={this.state.newName} onChange={this.handleNameChange}/>
@@ -66,7 +89,7 @@ class App extends Component {
                 <h2>Numerot</h2>
                 <table>
                     <tbody>
-                        {this.state.persons.map((person) => <Number key={person.name} person={person}/>)}
+                        {persons.map((person) => <Number key={person.name} person={person}/>)}
                     </tbody>
                 </table>
             </div>
