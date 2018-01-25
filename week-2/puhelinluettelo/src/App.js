@@ -6,6 +6,29 @@ const Number = ({person}) => {
     )
 }
 
+const Numbers = ({persons}) => (
+    <table>
+        <tbody>
+        {persons.map((person) => <Number key={person.name} person={person}/>)}
+        </tbody>
+    </table>
+)
+
+const FieldInput = ({label, attributes}) => (
+    <div>
+        {label} <input value={attributes.value} onChange={attributes.onChange}/>
+    </div>
+)
+
+const AddPersonForm = ({onSubmit, fields}) => (
+    <form onSubmit={onSubmit}>
+        {fields.map((field) => <FieldInput key={field.label} label={field.label} attributes={field.attributes}/>)}
+        <div>
+            <button type="submit">lisää</button>
+        </div>
+    </form>
+)
+
 class App extends Component {
     constructor(props) {
         super(props)
@@ -22,19 +45,9 @@ class App extends Component {
         }
     }
 
-    handleNameChange = (event) => {
-        const newName = event.target.value
-        this.setState({newName})
-    }
-
-    handleNumberChange = (event) => {
-        const newNumber = event.target.value
-        this.setState({newNumber})
-    }
-
-    handleFilterChange = (event) => {
-        const filterKeyword = event.target.value
-        this.setState({filterKeyword})
+    handleInputChange = (attributeName) => (event) => {
+        const value = event.target.value
+        this.setState({[attributeName]: value})
     }
 
     personWithNameExists = (name) => this.state.persons.some((person) => person.name === name)
@@ -65,33 +78,31 @@ class App extends Component {
         }
     }
 
+    inputFieldProps = (label, attribute) => {
+        return {label: label, attributes: this.inputAttributesFor(attribute)}
+    }
+
+    inputAttributesFor = (attributeName) => ({
+        value: this.state[attributeName],
+        onChange: this.handleInputChange(attributeName)
+    })
+
     render() {
         const persons = this.getFilteredPersons()
+        const inputFields = [
+            this.inputFieldProps('nimi', 'newName'),
+            this.inputFieldProps('numero', 'newNumber')
+        ]
         return (
             <div>
                 <h2>Puhelinluettelo</h2>
-
-                <div>rajaa näytettäviä <input value={this.state.filterKeyword} onChange={this.handleFilterChange}/></div>
+                <FieldInput label="rajaa näytettäviä" attributes={this.inputAttributesFor('filterKeyword')}/>
 
                 <h2>Lisää uusi</h2>
+                <AddPersonForm onSubmit={this.addPerson} fields={inputFields}/>
 
-                <form onSubmit={this.addPerson}>
-                    <div>
-                        nimi: <input value={this.state.newName} onChange={this.handleNameChange}/>
-                    </div>
-                    <div>
-                        numero: <input value={this.state.newNumber} onChange={this.handleNumberChange}/>
-                    </div>
-                    <div>
-                        <button type="submit">lisää</button>
-                    </div>
-                </form>
                 <h2>Numerot</h2>
-                <table>
-                    <tbody>
-                        {persons.map((person) => <Number key={person.name} person={person}/>)}
-                    </tbody>
-                </table>
+                <Numbers persons={persons}/>
             </div>
         )
     }
