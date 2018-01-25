@@ -16,8 +16,15 @@ class App extends Component {
         this.setState({newName})
     }
 
+    personWithNameExists = (name) => this.state.persons.some((person) => person.name === name)
+
     addPerson = (event) => {
         event.preventDefault()
+
+        if (this.personWithNameExists(this.state.newName)) {
+            return
+        }
+
         const persons = this.state.persons.concat({'name': this.state.newName})
         this.setState({
             persons,
