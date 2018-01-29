@@ -13,10 +13,10 @@ const CountryInfo = ({country}) => {
     )
 }
 
-const CountryList = ({countries}) => {
+const CountryList = ({countries, onClick}) => {
     return (
         <ul>
-            {countries.map(country => <p key={country.numericCode} >{country.name}</p>)}
+            {countries.map(country => <div onClick={country.onClick} key={country.numericCode} >{country.name}</div>)}
         </ul>
     )
 }
@@ -49,10 +49,17 @@ class App extends Component {
 
     componentWillMount() {
         axios.get('https://restcountries.eu/rest/v2/all').then(response => {
+            const countries = response.data.map(country => Object.assign(country, {onClick: this.handleOnClick(country.name)}))
             this.setState({
-                countries: response.data
+                countries
             })
             console.log(this.state.countries)
+        })
+    }
+
+    handleOnClick = (name) => (event) => {
+        this.setState({
+            filterKeyword: name
         })
     }
 
