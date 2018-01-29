@@ -1,16 +1,16 @@
 import React, {Component} from 'react';
 import personService from './services/person'
 
-const Number = ({person}) => {
+const Number = ({person, onClick}) => {
     return (
-        <tr><td>{person.name}</td><td>{person.number}</td></tr>
+        <tr><td>{person.name}</td><td>{person.number}</td><td><button onClick={onClick}>Poista</button></td></tr>
     )
 }
 
-const Numbers = ({persons}) => (
+const Numbers = ({persons, removePerson}) => (
     <table>
         <tbody>
-        {persons.map((person) => <Number key={person.name} person={person}/>)}
+        {persons.map((person) => <Number key={person.name} person={person} onClick={removePerson(person)}/>)}
         </tbody>
     </table>
 )
@@ -75,6 +75,16 @@ class App extends Component {
         })
     }
 
+    removePerson = (person) => (event) => {
+        if (window.confirm(`Poistetaanko ${person.name} ?`)) {
+            personService.remove(person).then(removedPerson =>
+                this.setState({
+                    persons: this.state.persons.filter(person => person.id !== removedPerson.id)
+                })
+            )
+        }
+    }
+
     getFilteredPersons() {
         if (this.state.filterKeyword.length === 0) {
             return this.state.persons
@@ -107,7 +117,7 @@ class App extends Component {
                 <AddPersonForm onSubmit={this.addPerson} fields={inputFields}/>
 
                 <h2>Numerot</h2>
-                <Numbers persons={persons}/>
+                <Numbers persons={persons} removePerson={this.removePerson} />
             </div>
         )
     }
