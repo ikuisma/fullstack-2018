@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
-import axios from 'axios';
-
-const SERVER_URL = 'http://localhost:3001/persons'
+import personService from './services/person'
 
 const Number = ({person}) => {
     return (
@@ -44,10 +42,8 @@ class App extends Component {
     }
 
     componentWillMount() {
-        axios.get(SERVER_URL).then(response => {
-            this.setState({
-                persons: response.data
-            })
+        personService.getAll().then(persons => {
+            this.setState({ persons })
         })
     }
 
@@ -70,9 +66,9 @@ class App extends Component {
             number: this.state.newNumber
         }
 
-        axios.post(SERVER_URL, newPerson).then(response => {
+        personService.create(newPerson).then(person => {
             this.setState({
-                persons: this.state.persons.concat(response.data),
+                persons: this.state.persons.concat(person),
                 newName: '',
                 newNumber: ''
             })
