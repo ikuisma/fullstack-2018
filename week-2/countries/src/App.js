@@ -53,7 +53,6 @@ class App extends Component {
             this.setState({
                 countries
             })
-            console.log(this.state.countries)
         })
     }
 
