@@ -54,25 +54,42 @@ class App extends Component {
 
     personWithNameExists = (name) => this.state.persons.some((person) => person.name === name)
 
-    addPerson = (event) => {
-        event.preventDefault()
-
-        if (this.personWithNameExists(this.state.newName)) {
-            return
-        }
-
-        const newPerson = {
-            name: this.state.newName,
-            number: this.state.newNumber
-        }
-
-        personService.create(newPerson).then(person => {
+    createNewPerson = (person) => {
+        personService.create(person).then(person => {
             this.setState({
                 persons: this.state.persons.concat(person),
                 newName: '',
                 newNumber: ''
             })
         })
+    }
+
+    updateOldPerson = (updatedPerson) => {
+        const oldPerson = this.state.persons.find(person => person.name === this.state.newName)
+        updatedPerson = {...oldPerson, ...updatedPerson}
+        personService.update(updatedPerson).then(updatedPerson => {
+            const persons = this.state.persons.map(person => person.id === updatedPerson.id ? updatedPerson : person)
+            this.setState({persons})
+        })
+    }
+
+    addPerson = (event) => {
+        event.preventDefault()
+
+        let person = {
+            name: this.state.newName,
+            number: this.state.newNumber
+        }
+
+        if (this.personWithNameExists(person.name)) {
+            if (window.confirm(`${person.name} on jo olemassa, korvataanko vanha numero uudella?`)) {
+                this.updateOldPerson(person)
+            } else {
+                return
+            }
+        } else {
+            this.createNewPerson(person)
+        }
     }
 
     removePerson = (person) => (event) => {

@@ -2,6 +2,8 @@ import axios from 'axios';
 
 const baseUrl = 'http://localhost:3001/persons'
 
+const resourceUrlFor = (person) => `${baseUrl}/${person.id}`
+
 const getAll = () => {
     return axios.get(baseUrl).then(response => response.data)
 }
@@ -11,8 +13,11 @@ const create = (newPerson) => {
 }
 
 const remove = (person) => {
-    const id = person.id
-    return axios.delete(`${baseUrl}/${id}`).then(response => person)
+    return axios.delete(resourceUrlFor(person)).then(response => person)
 }
 
-export default {getAll, create, remove}
+const update = (person) => {
+    return axios.put(resourceUrlFor(person), person).then(response => response.data)
+}
+
+export default {getAll, create, remove, update}
