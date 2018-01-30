@@ -1,6 +1,18 @@
 import React, {Component} from 'react';
 import personService from './services/person'
 
+const Notification = ({message}) => {
+    if (message === null) {
+        return null
+    } else {
+        return (
+            <div className="notification">
+                {message}
+            </div>
+        )
+    }
+}
+
 const Number = ({person, onClick}) => {
     return (
         <tr><td>{person.name}</td><td>{person.number}</td><td><button onClick={onClick}>Poista</button></td></tr>
@@ -37,13 +49,16 @@ class App extends Component {
             persons: [],
             newName: '',
             newNumber: '',
-            filterKeyword: ''
+            filterKeyword: '',
+            message: null
         }
     }
 
     componentWillMount() {
-        personService.getAll().then(persons => {
-            this.setState({ persons })
+        personService
+            .getAll()
+            .then(persons => {
+                this.setState({ persons })
         })
     }
 
@@ -55,22 +70,37 @@ class App extends Component {
     personWithNameExists = (name) => this.state.persons.some((person) => person.name === name)
 
     createNewPerson = (person) => {
-        personService.create(person).then(person => {
-            this.setState({
-                persons: this.state.persons.concat(person),
-                newName: '',
-                newNumber: ''
-            })
-        })
+        personService
+            .create(person)
+            .then(person => {
+                this.setState({
+                    persons: this.state.persons.concat(person),
+                    newName: '',
+                    newNumber: ''
+                })
+            }).then(
+                this.displayMessage(`Henkilö ${person.name} on lisätty. `)
+            )
     }
 
     updateOldPerson = (updatedPerson) => {
         const oldPerson = this.state.persons.find(person => person.name === this.state.newName)
         updatedPerson = {...oldPerson, ...updatedPerson}
-        personService.update(updatedPerson).then(updatedPerson => {
-            const persons = this.state.persons.map(person => person.id === updatedPerson.id ? updatedPerson : person)
-            this.setState({persons})
-        })
+        personService
+            .update(updatedPerson)
+            .then(updatedPerson => {
+                const persons = this.state.persons.map(person => person.id === updatedPerson.id ? updatedPerson : person)
+                this.setState({persons})
+            }).then(
+                this.displayMessage(`Henkilön ${updatedPerson.name} numero on päivitetty. `)
+            )
+    }
+
+    displayMessage = (message) => {
+        this.setState({message})
+        setTimeout(() => {
+            this.setState({message: null})
+        }, 5000)
     }
 
     addPerson = (event) => {
@@ -93,12 +123,16 @@ class App extends Component {
     }
 
     removePerson = (person) => (event) => {
-        if (window.confirm(`Poistetaanko ${person.name} ?`)) {
-            personService.remove(person).then(removedPerson =>
-                this.setState({
-                    persons: this.state.persons.filter(person => person.id !== removedPerson.id)
-                })
-            )
+        if (window.confirm(`Poistetaanko ${person.name}?`)) {
+            personService
+                .remove(person)
+                .then(removedPerson =>
+                    this.setState({
+                        persons: this.state.persons.filter(person => person.id !== removedPerson.id)
+                    })
+                ).then(
+                    this.displayMessage(`Henkilö ${person.name} on poistettu. `)
+                )
         }
     }
 
@@ -128,6 +162,7 @@ class App extends Component {
         return (
             <div>
                 <h2>Puhelinluettelo</h2>
+                <Notification message={this.state.message}/>
                 <FieldInput label="rajaa näytettäviä" attributes={this.inputAttributesFor('filterKeyword')}/>
 
                 <h2>Lisää uusi</h2>
