@@ -93,7 +93,16 @@ class App extends Component {
                 this.setState({persons})
             }).then(
                 this.displayMessage(`Henkilön ${updatedPerson.name} numero on päivitetty. `)
-            )
+            ).catch(error => {
+                this.removePersonFromState(updatedPerson)
+                this.createNewPerson(updatedPerson)
+            })
+    }
+
+    removePersonFromState = (person) => {
+        this.setState({
+            persons: this.state.persons.filter(p => p.id !== person.id)
+        })
     }
 
     displayMessage = (message) => {
