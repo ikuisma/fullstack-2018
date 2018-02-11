@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const baseUrl = 'http://localhost:3001/persons'
+const serverUrl = '/'
+const baseUrl = `${serverUrl}api/persons`
 
 const resourceUrlFor = (person) => `${baseUrl}/${person.id}`
 
