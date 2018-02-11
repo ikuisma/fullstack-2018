@@ -4,15 +4,7 @@ const app = express()
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const mongoose = require('mongoose')
-
-const Blog = mongoose.model('Blog', {
-  title: String,
-  author: String,
-  url: String,
-  likes: Number
-})
-
-module.exports = Blog
+const Blog = require('./model/blog')
 
 app.use(cors())
 app.use(bodyParser.json())
