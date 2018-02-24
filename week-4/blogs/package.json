@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js",
-    "watch": "node ./node_modules/nodemon/bin/nodemon index.js"
+    "watch": "node ./node_modules/nodemon/bin/nodemon index.js",
+    "test": "jest --verbose"
   },
   "author": "",
   "license": "ISC",
@@ -17,6 +17,7 @@
     "mongoose": "^5.0.4"
   },
   "devDependencies": {
+    "jest": "^22.4.2",
     "nodemon": "^1.14.12"
   }
 }
