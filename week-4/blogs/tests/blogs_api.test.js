@@ -3,7 +3,6 @@ const { app, server } = require('../index')
 const Blog = require('../model/blog')
 const api = supertest(app)
 
-
 const initialBlogs = [
     {   
         title: "Tabs Versus Spaces — The Definitive Guide",
@@ -20,7 +19,7 @@ beforeAll(async () => {
     await Promise.all(promiseArray)
 })
 
-describe('get notes', () => {
+describe('get blogs', () => {
 
     test('blogs are returned as json', async () => {
         await api
@@ -40,6 +39,24 @@ describe('get notes', () => {
             .get('/api/blogs')
         const titles = response.body.map(blog => blog.title)
         expect(titles).toContain('Tabs Versus Spaces — The Definitive Guide')
+    })
+
+})
+
+describe('post blogs', () => {
+
+    test('new blog post can be added', async () => {
+        const newBlog = {   
+            title: "New Blog Post",
+            author: "Devin Developer",
+            url: "www.google.com",
+            likes: 1
+        }
+        await api
+            .post('/api/blogs')
+            .send(newBlog)
+            .expect(201)
+            .expect('Content-Type', /application\/json/)
     })
 
 })
