@@ -4,14 +4,18 @@ const Blog = require('../model/blog')
 const api = supertest(app)
 const { initialBlogs, blogsInDb } = require('./test_helper')
 
-beforeAll(async () => {
+const initialiseDatabase = async () => {
     await Blog.remove({})
     const blogs = initialBlogs.map(data => Blog(data))
     const promiseArray = blogs.map(blog => blog.save())
     await Promise.all(promiseArray)
-})
+}
 
 describe('get blogs', () => {
+
+    beforeAll(async () => {
+        await initialiseDatabase()
+    })
 
     test('blogs are returned as json', async () => {
         await api
@@ -38,6 +42,10 @@ describe('get blogs', () => {
 
 describe('post blogs', () => {
 
+    beforeAll(async () => {
+        await initialiseDatabase()
+    })
+
     test('new blog post can be added', async () => {
         const blogsBefore = await blogsInDb()
         const newBlog = {   
@@ -60,7 +68,7 @@ describe('post blogs', () => {
         const newBlog = {
             title: "Blog post with no likes",
             author: "Devin Developer",
-            url: "www.google.com",
+            url: "www.google.com"
         }
         const response = await api.post('/api/blogs').send(newBlog)
         expect(response.status).toBe(201)
