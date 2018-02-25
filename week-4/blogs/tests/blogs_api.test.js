@@ -130,6 +130,6 @@ describe('update blogs', () => {
 
 })
 
-afterAll(() => {
-    server.close()
+afterAll(async () => {
+    await server.close()
 })
