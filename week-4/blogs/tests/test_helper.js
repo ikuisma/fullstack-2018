@@ -24,8 +24,17 @@ const blogsInDb = async () => {
     return blogs.map(formatBlog)
 }
 
+const nonExistingId = async () => {
+    const blog = new Blog()
+    await blog.save()
+    await blog.remove()
+  
+    return blog._id.toString()
+  }
+  
 module.exports = {
     initialBlogs,
     formatBlog,
-    blogsInDb
+    blogsInDb,
+    nonExistingId
 }

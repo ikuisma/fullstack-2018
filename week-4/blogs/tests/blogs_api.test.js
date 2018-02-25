@@ -64,7 +64,7 @@ describe('post blogs', () => {
         expect(blogsAfter.length).toEqual(blogsBefore.length + 1)
     })
 
-    test('creating a blog post with no likes get instantiated with zero likes', async() => {
+    test('creating a blog post with no likes get instantiated with zero likes', async () => {
         const newBlog = {
             title: "Blog post with no likes",
             author: "Devin Developer",
@@ -75,7 +75,7 @@ describe('post blogs', () => {
         expect(response.body.likes).toBe(0)
     })
 
-    test('creating a blog post with a missing url returns 400', async() => {
+    test('creating a blog post with a missing url returns 400', async () => {
         const newBlog = {
             title: "Blog post with no likes",
             author: "Devin Developer"
@@ -85,7 +85,7 @@ describe('post blogs', () => {
             .expect(400)
     })
 
-    test('creating a blog post with a missing title returns 400', async() => {
+    test('creating a blog post with a missing title returns 400', async () => {
         const newBlog = {
             url: "www.google.com",
             author: "Devin Developer"
@@ -93,6 +93,22 @@ describe('post blogs', () => {
         await api.post('/api/blogs')
             .send(newBlog)
             .expect(400)
+    })
+
+})
+
+describe('delete blogs', () => {
+
+    beforeAll(async () => {
+        await initialiseDatabase()
+    })
+
+    test('deleting an existing blog post returns status code 204', async () => {
+        const blogsBefore = await blogsInDb()
+        const id = blogsBefore[0].id
+        await api.delete(`/api/blogs/${id}`).expect(204)
+        const blogsAfter = await blogsInDb()
+        expect(blogsBefore.length).toBe(blogsAfter.length + 1)
     })
 
 })

@@ -16,7 +16,17 @@ blogsRouter.post('/', async (request, response) => {
     const result = await blog.save()
     response.status(201).json(result)
   } catch (exception) {
-    response.status(500).json({error: 'Something went wrong with the request. '})
+    response.status(500).send({error: 'Something went wrong with the request. '})
+  }
+})
+
+blogsRouter.delete('/:id', async (request, response) => {
+  try {
+    const id = request.params.id
+    await Blog.findByIdAndRemove(id)
+    return response.status(204).end()
+  } catch (exception) {
+    return response.status(400).send({error: 'Malformatted id. '})
   }
 })
 
