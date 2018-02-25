@@ -12,6 +12,7 @@ usersRouter.post('/', async (request, response) => {
             username: body.username,
             name: body.name,
             adult: body.adult,
+            blogs: [],
             passwordHash
         })
         const savedUser = await user.save()
@@ -24,7 +25,7 @@ usersRouter.post('/', async (request, response) => {
 
 usersRouter.get('/', async (request, response) => {
     try {
-        const users = await User.find({})
+        const users = await User.find({}).populate('blogs')
         response.json(users.map(User.format))
     } catch (exception) {
         console.log(exception)

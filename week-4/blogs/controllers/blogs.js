@@ -1,21 +1,32 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../model/blog')
+const User = require('../model/user')
 
 blogsRouter.get('/', async (request, response) => {
-    const blogs = await Blog.find({})
+  try {
+    const blogs = await Blog.find({}).populate('user', { username: 1, name: 1})
     response.json(blogs)
+  } catch (exception) {
+    console.log(exception)
+    response.status(500).send({error: 'Server error. '})
+  }
 })
 
 blogsRouter.post('/', async (request, response) => {
   try {
-    const data = {likes: 0, ...request.body}
+    const users = await User.find({})
+    const user = users[0]
+    const data = {likes: 0, user: user._id, ...request.body}
     const blog = new Blog(data)
     if (blog.title === undefined || blog.url === undefined) {
       return response.status(400).json({error: 'Missing blog title or url. '})
     }
-    const result = await blog.save()
-    response.status(201).json(result)
+    const newBlog = await blog.save()
+    user.blogs = user.blogs.concat(blog._id)
+    user.save()
+    response.status(201).json(newBlog)
   } catch (exception) {
+    console.log(exception)
     response.status(500).send({error: 'Something went wrong with the request. '})
   }
 })
