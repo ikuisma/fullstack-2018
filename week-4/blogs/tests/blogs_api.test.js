@@ -70,6 +70,26 @@ describe('post blogs', () => {
         expect(response.body.likes).toBe(0)
     })
 
+    test('creating a blog post with a missing url returns 400', async() => {
+        const newBlog = {
+            title: "Blog post with no likes",
+            author: "Devin Developer"
+        }
+        await api.post('/api/blogs')
+            .send(newBlog)
+            .expect(400)
+    })
+
+    test('creating a blog post with a missing title returns 400', async() => {
+        const newBlog = {
+            url: "www.google.com",
+            author: "Devin Developer"
+        }
+        await api.post('/api/blogs')
+            .send(newBlog)
+            .expect(400)
+    })
+
 })
 
 afterAll(() => {
