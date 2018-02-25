@@ -5,11 +5,17 @@ const User = require('../model/user')
 const api = supertest(app)
 const { initialBlogs, blogsInDb, usersInDb } = require('./test_helper')
 
+let credentials = {username: "Tester", password: "TesterPassword", token: ""}
+
 const initialiseDatabase = async () => {
     await Blog.remove({})
     const blogs = initialBlogs.map(data => Blog(data))
     const promiseArray = blogs.map(blog => blog.save())
     await Promise.all(promiseArray)
+}
+
+const createUser = async (username, password) => {
+    await api.post('/api/users').send({username, password, name: 'Test', adult: true})
 }
 
 describe('get blogs', () => {
@@ -41,10 +47,13 @@ describe('get blogs', () => {
 
 })
 
-describe('post blogs', () => {
+describe('post blogs with user who has authenticated', () => {
 
     beforeAll(async () => {
         await initialiseDatabase()
+        await createUser(credentials.username, credentials.password)
+        response = await api.post('/login').send(credentials)
+        credentials.token = response.body.token
     })
 
     test('new blog post can be added', async () => {
@@ -58,6 +67,7 @@ describe('post blogs', () => {
         await api
             .post('/api/blogs')
             .send(newBlog)
+            .set({ Authorization: `bearer ${credentials.token}`})
             .expect(201)
             .expect('Content-Type', /application\/json/)       
         const blogsAfter = await blogsInDb()
@@ -71,7 +81,9 @@ describe('post blogs', () => {
             author: "Devin Developer",
             url: "www.google.com"
         }
-        const response = await api.post('/api/blogs').send(newBlog)
+        const response = await api.post('/api/blogs')
+            .send(newBlog)
+            .set({ Authorization: `bearer ${credentials.token}`})
         expect(response.status).toBe(201)
         expect(response.body.likes).toBe(0)
     })
@@ -83,6 +95,7 @@ describe('post blogs', () => {
         }
         await api.post('/api/blogs')
             .send(newBlog)
+            .set({ Authorization: `bearer ${credentials.token}`})
             .expect(400)
     })
 
@@ -93,6 +106,7 @@ describe('post blogs', () => {
         }
         await api.post('/api/blogs')
             .send(newBlog)
+            .set({ Authorization: `bearer ${credentials.token}`})
             .expect(400)
     })
 
@@ -134,9 +148,7 @@ describe('update blogs', () => {
 describe('when there is only one user in the database', () => {
 
     beforeAll(async () => {
-        await User.remove({})
-        const user = new User({username: 'PaavoUser', name:'Paavo', password: 'Ovaap', adult: true})
-        await user.save()
+        await initialiseDatabase()
     })
     
     test('GET /api/users returns all users in the database', async () => {
