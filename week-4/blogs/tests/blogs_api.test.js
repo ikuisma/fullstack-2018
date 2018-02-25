@@ -113,6 +113,23 @@ describe('delete blogs', () => {
 
 })
 
+describe('update blogs', () => {
+
+    beforeAll(async () => {
+        await initialiseDatabase()
+    })
+
+    test('updating the likes of a blog succeeds', async () => {
+        const blogsBefore = await blogsInDb()
+        const blog = blogsBefore[0]
+        const newLikes = blog.likes + 1
+        const response = await api.put(`/api/blogs/${blog.id}`).send({likes: newLikes})
+        expect(response.status).toBe(200)
+        expect(response.body.likes).toBe(newLikes)
+    })
+
+})
+
 afterAll(() => {
     server.close()
 })
