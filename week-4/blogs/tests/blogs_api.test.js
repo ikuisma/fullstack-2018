@@ -59,6 +59,17 @@ describe('post blogs', () => {
             .expect('Content-Type', /application\/json/)
     })
 
+    test('creating a blog post with no likes get instantiated with zero likes', async() => {
+        const newBlog = {
+            title: "Blog post with no likes",
+            author: "Devin Developer",
+            url: "www.google.com",
+        }
+        const response = await api.post('/api/blogs').send(newBlog)
+        expect(response.status).toBe(201)
+        expect(response.body.likes).toBe(0)
+    })
+
 })
 
 afterAll(() => {
