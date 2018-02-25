@@ -2,15 +2,7 @@ const supertest = require('supertest')
 const { app, server } = require('../index')
 const Blog = require('../model/blog')
 const api = supertest(app)
-
-const initialBlogs = [
-    {   
-        title: "Tabs Versus Spaces — The Definitive Guide",
-        author: "Devin Developer",
-        url: "www.google.com",
-        likes: 5
-    }
-]
+const { initialBlogs, blogsInDb } = require('./test_helper')
 
 beforeAll(async () => {
     await Blog.remove({})
@@ -28,10 +20,11 @@ describe('get blogs', () => {
             .expect('Content-Type', /application\/json/)
     })
     
-    test('all initial blogs are returned', async () => {
+    test('all saved blogs from database are returned', async () => {
         const response = await api
             .get('/api/blogs')
-        expect(response.body.length).toBe(initialBlogs.length)
+        const blogs = await blogsInDb()
+        expect(response.body.length).toBe(blogs.length)
     })
     
     test('returned blog list contains blog from initial database state', async () => {
@@ -46,6 +39,7 @@ describe('get blogs', () => {
 describe('post blogs', () => {
 
     test('new blog post can be added', async () => {
+        const blogsBefore = await blogsInDb()
         const newBlog = {   
             title: "New Blog Post",
             author: "Devin Developer",
@@ -56,7 +50,10 @@ describe('post blogs', () => {
             .post('/api/blogs')
             .send(newBlog)
             .expect(201)
-            .expect('Content-Type', /application\/json/)
+            .expect('Content-Type', /application\/json/)       
+        const blogsAfter = await blogsInDb()
+        expect(blogsAfter.map(b => b.title)).toContain(newBlog.title)
+        expect(blogsAfter.length).toEqual(blogsBefore.length + 1)
     })
 
     test('creating a blog post with no likes get instantiated with zero likes', async() => {
