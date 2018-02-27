@@ -3,6 +3,8 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
+const localStorageUserKey = 'user'
+
 class App extends React.Component {
   constructor(props) {
     super(props)
@@ -19,10 +21,32 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    const user = this.loadUserFromLocalStorage()
+    console.log(user)
+    if (user !== null) {
+      this.setState({user, username: user.username, password: user.password})
+    }
     blogService.getAll().then(blogs =>
       this.setState({ blogs })
     )
-  } 
+  }
+
+  saveUserToLocalStorage = (user) => {
+    window.localStorage.setItem(localStorageUserKey, JSON.stringify(user))
+  }
+
+  clearUserFromLocalStorage = () => {
+    window.localStorage.setItem(localStorageUserKey, null)
+  }
+
+  loadUserFromLocalStorage() {
+    const user = window.localStorage.getItem(localStorageUserKey)
+    if (user !== null) {
+      return JSON.parse(user)
+    } else {
+      return user
+    }
+  }
 
   login = async (event) => {
     event.preventDefault()
@@ -31,10 +55,17 @@ class App extends React.Component {
         username: this.state.username,
         password: this.state.password
       })
+      this.saveUserToLocalStorage(user)
       this.setState({user, username: '', password: ''})
     } catch (exception) {
-      console.log('Whoops!')
+      console.log(exception)
     }
+  }
+
+  logout = (event) => {
+    event.preventDefault()
+    this.clearUserFromLocalStorage()
+    this.setState({user: null, username: '', password: ''})
   }
 
   render() {
@@ -57,7 +88,10 @@ class App extends React.Component {
     return (
       <div>
         <h2>blogs</h2>
-        <p>{this.state.user.name} logged in. </p>
+        <div>
+          {this.state.user.name} logged in.
+          <button onClick={this.logout}>Logout</button>        
+        </div>
         {this.state.blogs.map(blog => 
           <Blog key={blog._id} blog={blog}/>
         )}
