@@ -6,6 +6,18 @@ import CreateForm from './components/CreateForm'
 
 const localStorageUserKey = 'user'
 
+const Notification = ({message}) => {
+  if (message !== null) {
+    return (
+      <div>
+        <h3>{message}</h3>
+      </div>
+    )
+  } else {
+    return null;
+  }
+} 
+
 class App extends React.Component {
   constructor(props) {
     super(props)
@@ -13,7 +25,8 @@ class App extends React.Component {
       blogs: [],
       user: null,
       username: '',
-      password: ''
+      password: '',
+      error: null
     }
   }
 
@@ -59,7 +72,7 @@ class App extends React.Component {
       blogService.setToken(user.token)
       this.setState({user, username: '', password: ''})
     } catch (exception) {
-      console.log(exception)
+      this.displayMessage('Käyttäjätunnus tai salasana virheellinen! ')
     }
   }
 
@@ -73,6 +86,16 @@ class App extends React.Component {
     this.setState({
       blogs: this.state.blogs.concat(newBlog)
     })
+    this.displayMessage(`A new blog '${newBlog.title}' by ${newBlog.author} added. `)
+  }
+
+  displayMessage = (message) => {
+    this.setState({
+      error: message,
+    })
+    setTimeout(() => {
+      this.setState({ error: null })
+    }, 5000)
   }
 
   render() {
@@ -80,6 +103,7 @@ class App extends React.Component {
       return (
         <div>
           <h2>Kirjaudu sovellukseen</h2>
+          <Notification message={this.state.error}/>
           <form onSubmit={this.login}>
             <div>
               Käyttäjätunnus <input type="text" name="username" value={this.state.username} onChange={this.handleLoginFieldChange}/>
@@ -95,6 +119,7 @@ class App extends React.Component {
     return (
       <div>
         <h2>Blogs</h2>
+        <Notification message={this.state.error}/>
         <div>
           {this.state.user.name} logged in.
           <button onClick={this.logout}>Logout</button>        
