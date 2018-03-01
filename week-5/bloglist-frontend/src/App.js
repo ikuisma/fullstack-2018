@@ -16,7 +16,54 @@ const Notification = ({message}) => {
   } else {
     return null;
   }
-} 
+}
+
+const LoginForm = ({handleChange, handleSubmit, username, password}) => {
+  return (
+    <div>
+      <form onSubmit={handleSubmit}>
+        <div>
+          Käyttäjätunnus <input type="text" name="username" value={username} onChange={handleChange}/>
+        </div>
+        <div>
+          Salasana <input type="password" name="password" value={password} onChange={handleChange}/>
+        </div>
+        <button type="submit">Kirjaudu</button>
+      </form>
+    </div>
+  )
+}
+
+class Togglable extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      visible: false
+    }
+  }
+
+  toggleVisible = () => {
+    this.setState({
+      visible: !this.state.visible
+    })
+  }
+
+  render() {
+    const hideWhenVisible = {display: this.state.visible ? 'none' : ''}
+    const showWhenVisible = {display: this.state.visible ? '' : 'none'}
+    return (
+      <div>
+        <div style={hideWhenVisible}>
+          <button onClick={this.toggleVisible}>{this.props.buttonLabel}</button>
+        </div>
+        <div  style={showWhenVisible}>
+          {this.props.children}
+          <button onClick={this.toggleVisible}>Cancel</button>
+        </div>
+      </div>
+    )  
+  }
+}
 
 class App extends React.Component {
   constructor(props) {
@@ -104,15 +151,7 @@ class App extends React.Component {
         <div>
           <h2>Kirjaudu sovellukseen</h2>
           <Notification message={this.state.error}/>
-          <form onSubmit={this.login}>
-            <div>
-              Käyttäjätunnus <input type="text" name="username" value={this.state.username} onChange={this.handleLoginFieldChange}/>
-            </div>
-            <div>
-              Salasana <input type="password" name="password" value={this.state.password} onChange={this.handleLoginFieldChange}/>
-            </div>
-            <button type="submit">Kirjaudu</button>
-          </form>
+          <LoginForm handleChange={this.handleLoginFieldChange} handleSubmit={this.login} username={this.state.username} password={this.state.password} />
         </div>
       )
     }
@@ -125,12 +164,14 @@ class App extends React.Component {
           <button onClick={this.logout}>Logout</button>        
         </div>
         <h2>Create new blog</h2>
-        <CreateForm onSuccess={this.addBlogToList}/>
+        <Togglable buttonLabel="New blog">
+          <CreateForm onSuccess={this.addBlogToList}/>
+        </Togglable>
         {this.state.blogs.map(blog => 
           <Blog key={blog._id} blog={blog}/>
         )}
       </div>
-    );
+    )
   }
 }
 
