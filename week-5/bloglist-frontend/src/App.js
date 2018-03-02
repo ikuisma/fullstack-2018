@@ -1,5 +1,4 @@
 import React from 'react'
-import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import CreateForm from './components/CreateForm'
@@ -34,7 +33,45 @@ const LoginForm = ({handleChange, handleSubmit, username, password}) => {
   )
 }
 
-class Togglable extends React.Component {
+class Blog extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      visible: false
+    }
+  }
+
+  toggleVisible = () => {
+    this.setState({
+      visible: !this.state.visible
+    })
+  }
+
+  render() {
+    const blogStyle = {
+      paddingTop: 10,
+      paddingLeft: 2,
+      border: 'solid',
+      borderWidth: 1,
+      marginBottom: 5
+    }
+    const blog = this.props.blog
+    const showWhenVisible = {display: this.state.visible ? '' : 'none'}
+    return (
+      <div style={blogStyle}>
+           <p onClick={this.toggleVisible}> {blog.title} {blog.author}</p>
+           <div style={showWhenVisible}>
+            <a href={blog.url}>{blog.url}</a>
+            <p>{blog.likes} likes</p>
+            <button>like</button>
+            <p>Added by {blog.user === undefined ? 'Not available' : blog.user.name }</p>
+           </div>     
+      </div>
+    )  
+  }
+}
+
+class Toggleable extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -85,7 +122,7 @@ class App extends React.Component {
     const user = this.loadUserFromLocalStorage()
     console.log(user)
     if (user !== null) {
-      this.setState({user, username: user.username, password: user.password})
+      this.setState({ user, username: user.username, password: user.password })
     }
     blogService.getAll().then(blogs =>
       this.setState({ blogs })
@@ -117,7 +154,7 @@ class App extends React.Component {
       })
       this.saveUserToLocalStorage(user)
       blogService.setToken(user.token)
-      this.setState({user, username: '', password: ''})
+      this.setState({ user, username: '', password: '' })
     } catch (exception) {
       this.displayMessage('Käyttäjätunnus tai salasana virheellinen! ')
     }
@@ -126,7 +163,7 @@ class App extends React.Component {
   logout = (event) => {
     event.preventDefault()
     this.clearUserFromLocalStorage()
-    this.setState({user: null, username: '', password: ''})
+    this.setState({ user: null, username: '', password: '' })
   }
 
   addBlogToList = (newBlog) => {
@@ -164,9 +201,9 @@ class App extends React.Component {
           <button onClick={this.logout}>Logout</button>        
         </div>
         <h2>Create new blog</h2>
-        <Togglable buttonLabel="New blog">
+        <Toggleable buttonLabel="New blog">
           <CreateForm onSuccess={this.addBlogToList}/>
-        </Togglable>
+        </Toggleable>
         {this.state.blogs.map(blog => 
           <Blog key={blog._id} blog={blog}/>
         )}
