@@ -182,7 +182,7 @@ class App extends React.Component {
 
   addUpdatedBlog = (updatedBlog) => {
     const updatedBlogs = this.state.blogs.filter(blog => blog._id !== updatedBlog._id).concat(updatedBlog)
-    this.setState({blog: updatedBlogs})
+    this.setState({blogs: updatedBlogs})
   }
 
   displayMessage = (message) => {
