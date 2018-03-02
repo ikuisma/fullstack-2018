@@ -47,6 +47,13 @@ class Blog extends React.Component {
     })
   }
 
+  increaseLikes = async () => {
+    let updatedBlog = this.props.blog;
+    updatedBlog.likes += 1;
+    updatedBlog = await blogService.update(updatedBlog);
+    this.props.onUpdateBlog(updatedBlog)
+  }
+
   render() {
     const blogStyle = {
       paddingTop: 10,
@@ -63,7 +70,7 @@ class Blog extends React.Component {
            <div style={showWhenVisible}>
             <a href={blog.url}>{blog.url}</a>
             <p>{blog.likes} likes</p>
-            <button>like</button>
+            <button onClick={this.increaseLikes}>like</button>
             <p>Added by {blog.user === undefined ? 'Not available' : blog.user.name }</p>
            </div>     
       </div>
@@ -173,6 +180,11 @@ class App extends React.Component {
     this.displayMessage(`A new blog '${newBlog.title}' by ${newBlog.author} added. `)
   }
 
+  addUpdatedBlog = (updatedBlog) => {
+    const updatedBlogs = this.state.blogs.filter(blog => blog._id !== updatedBlog._id).concat(updatedBlog)
+    this.setState({blog: updatedBlogs})
+  }
+
   displayMessage = (message) => {
     this.setState({
       error: message,
@@ -205,7 +217,7 @@ class App extends React.Component {
           <CreateForm onSuccess={this.addBlogToList}/>
         </Toggleable>
         {this.state.blogs.map(blog => 
-          <Blog key={blog._id} blog={blog}/>
+          <Blog key={blog._id} blog={blog} onUpdateBlog={this.addUpdatedBlog}/>
         )}
       </div>
     )
