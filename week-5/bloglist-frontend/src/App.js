@@ -216,7 +216,7 @@ class App extends React.Component {
         <Toggleable buttonLabel="New blog">
           <CreateForm onSuccess={this.addBlogToList}/>
         </Toggleable>
-        {this.state.blogs.map(blog => 
+        {this.state.blogs.sort((blogOne,blogTwo) => blogTwo.likes - blogOne.likes).map(blog => 
           <Blog key={blog._id} blog={blog} onUpdateBlog={this.addUpdatedBlog}/>
         )}
       </div>
