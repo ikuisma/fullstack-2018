@@ -5,14 +5,22 @@ import SimpleBlog from './SimpleBlog'
 describe('<SimpleBlog/>', () => {
 
     let simpleBlog
+    let mockHandler
     const blog = {
         title: 'Komponenttitestaus',
         author: 'Devin Developer',
         likes: 1
     }
     
+    const clickElement = (element, clicks) => {
+        for (let i=0; i<clicks; i++) {
+            element.simulate('click')
+        }
+    }
+
     beforeEach(() => {
-        simpleBlog = shallow(<SimpleBlog blog={blog}/>)
+        mockHandler = jest.fn()
+        simpleBlog = shallow(<SimpleBlog blog={blog} onClick={mockHandler}/>)
     })
 
     it('renders blog title', () => {
@@ -28,6 +36,12 @@ describe('<SimpleBlog/>', () => {
     it('renders number of blog likes', () => {
         const blogLikes = simpleBlog.find('.blog-likes')
         expect(blogLikes.text()).toContain(`blog has ${blog.likes} likes`)
+    })
+
+    it('clicks buttons', () => {
+        const likeButton = simpleBlog.find('button')
+        clickElement(likeButton, 2)
+        expect(mockHandler.mock.calls.length).toBe(2)
     })
 
 })
