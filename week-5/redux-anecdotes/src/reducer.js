@@ -24,11 +24,13 @@ const reducer = (state = initialState, action) => {
   console.log('action', action)
   switch(action.type) {
     case 'VOTE':
-      const anecdote = {
+      let anecdote = {
         ...action.data.anecdote, 
         votes: action.data.anecdote.votes + 1
       }
       return state.filter(a => a.id !== anecdote.id).concat(anecdote)
+    case 'CREATE':
+      return state.concat(asObject(action.data.content))
     default:
       return state
   }

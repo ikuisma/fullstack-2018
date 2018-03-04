@@ -4,12 +4,20 @@ class App extends React.Component {
 
   voteFor(anecdote) {
     return () => {
-      console.log(anecdote)
       this.props.store.dispatch({
         type: 'VOTE',
         data: {anecdote}
       })
     }
+  }
+
+  onCreate = (event) =>{
+    event.preventDefault()
+    this.props.store.dispatch({
+      type: 'CREATE',
+      data: {content: event.target.content.value}
+    })
+    event.target.content.value = ''
   }
 
   render() {
@@ -29,9 +37,9 @@ class App extends React.Component {
           </div>
         )}
         <h2>create new</h2>
-        <form>
-          <div><input /></div>
-          <button>create</button> 
+        <form onSubmit={this.onCreate}>
+          <div><input name="content"/></div>
+          <button type="submit">create</button> 
         </form>
       </div>
     )
