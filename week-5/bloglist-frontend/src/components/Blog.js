@@ -35,13 +35,13 @@ class Blog extends React.Component {
       const deleteButton = this.props.showDelete ? <button onClick={this.props.onDeleteBlog}>delete</button> : null
       return (
         <div style={blogStyle}>
-             <p onClick={this.toggleVisible}> {blog.title} {blog.author}</p>
-             <div style={showWhenVisible}>
-              <a href={blog.url}>{blog.url}</a>
-              <p>{blog.likes} likes</p>
-              <button onClick={this.increaseLikes}>like</button>
-              <p>Added by {blog.user === undefined ? 'Not available' : blog.user.name }</p>
-              {deleteButton}
+             <p className="blog-title" onClick={this.toggleVisible}> {blog.title} {blog.author}</p>
+             <div className="blog-expanded" style={showWhenVisible}>
+                <a href={blog.url}>{blog.url}</a>
+                <p>{blog.likes} likes</p>
+                <button onClick={this.increaseLikes}>like</button>
+                <p>Added by {blog.user === undefined ? 'Not available' : blog.user.name }</p>
+                {deleteButton}
              </div>     
         </div>
       )  
