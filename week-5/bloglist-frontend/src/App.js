@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import CreateForm from './components/CreateForm'
@@ -31,6 +32,13 @@ const LoginForm = ({handleChange, handleSubmit, username, password}) => {
       </form>
     </div>
   )
+}
+
+LoginForm.propTypes = {
+  handleChange: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
+  username: PropTypes.string.isRequired,
+  password: PropTypes.string.isRequired
 }
 
 class Blog extends React.Component {
@@ -214,7 +222,12 @@ class App extends React.Component {
         <div>
           <h2>Kirjaudu sovellukseen</h2>
           <Notification message={this.state.error}/>
-          <LoginForm handleChange={this.handleLoginFieldChange} handleSubmit={this.login} username={this.state.username} password={this.state.password} />
+          <LoginForm 
+            handleChange={this.handleLoginFieldChange} 
+            handleSubmit={this.login} 
+            username={this.state.username} 
+            password={this.state.password}
+          />
         </div>
       )
     }
@@ -231,7 +244,12 @@ class App extends React.Component {
           <CreateForm onSuccess={this.addBlogToList}/>
         </Toggleable>
         {this.state.blogs.sort((blogOne,blogTwo) => blogTwo.likes - blogOne.likes).map(blog => 
-          <Blog key={blog._id} blog={blog} onUpdateBlog={this.addUpdatedBlog} onDeleteBlog={this.deleteBlog(blog)} showDelete={blog.user === undefined || blog.user.username === this.state.user.username}/>
+          <Blog 
+            key={blog._id} 
+            blog={blog} 
+            onUpdateBlog={this.addUpdatedBlog} onDeleteBlog={this.deleteBlog(blog)} 
+            showDelete={blog.user === undefined || blog.user.username === this.state.user.username}
+          />
         )}
       </div>
     )
