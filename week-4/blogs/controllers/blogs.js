@@ -13,43 +13,56 @@ blogsRouter.get('/', async (request, response) => {
   }
 })
 
-blogsRouter.post('/', async (request, response) => {
+const authenticate = (request, response, next) => {
   try {
     const token = request.token
     const decodedToken = jwt.verify(token, process.env.SECRET)
-    
     if (!token || !decodedToken.id) {
-      return response.status(401).json({ error: 'Token missing or invalid. '})
+      return response.status(401).json({ error: 'Token missing or invalid. '}).end()
     }
+    User.findById(decodedToken.id).then(user => {
+      request.user = user
+      next()
+    })
+  } catch (exception) {
+    if (exception.name === 'JsonWebTokenError' ) {
+      response.status(401).json({ error: exception.message }).end()
+    } else {
+      console.log(exception)
+      response.status(500).send({error: 'Something went wrong with the request. '}).end()
+    }
+  }
+}
 
-    const user = await User.findById(decodedToken.id)
-    const data = {likes: 0, user: user._id, ...request.body}
-    const blog = new Blog(data)
-
+blogsRouter.post('/', authenticate, async (request, response) => {
+  try {
+    const user = request.user
+    const blog = new Blog({likes: 0, user: user._id, ...request.body})
     if (blog.title === undefined || blog.url === undefined) {
       return response.status(400).json({error: 'Missing blog title or url. '})
     }
-
-    const newBlog = await blog.save()
+    await blog.save()
     user.blogs = user.blogs.concat(blog._id)
-    user.save()
-    response.status(201).json(newBlog)
-
+    await user.save()
+    response.status(201).json(await Blog.findById(blog._id).populate('user', { username: 1, name: 1}))
   } catch (exception) {
-    if (exception.name === 'JsonWebTokenError' ) {
-      response.status(401).json({ error: exception.message })
-    } else {
       console.log(exception)
       response.status(500).send({error: 'Something went wrong with the request. '})
     }
   }
-})
+)
 
-blogsRouter.delete('/:id', async (request, response) => {
+blogsRouter.delete('/:id', authenticate, async (request, response) => {
   try {
+    const user = request.user
     const id = request.params.id
-    await Blog.findByIdAndRemove(id)
-    return response.status(204).end()
+    const blog = await Blog.findById(id)
+    if (blog.user === user.id || !blog.user) {
+      await Blog.findByIdAndRemove(id)
+      return response.status(204).end()
+    } else {
+      return response.status(401).send({ error: 'You do not have acceess to this resource. '})
+    }
   } catch (exception) {
     return response.status(400).send({error: 'Malformatted id. '})
   }
