@@ -1,8 +1,13 @@
 import React from 'react'
+import { createStore } from 'redux'
 import counterReducer from './reducer'
 
-const Statistiikka = () => {
-  const palautteita = 0
+const store = createStore(counterReducer)
+
+const Statistiikka = ({good, bad, neutral}) => {
+  const palautteita = good + bad + neutral
+  const average = palautteita !== 0 ? good - bad / palautteita : null
+  const positiivisia = palautteita !== 0 ? good / palautteita : null
 
   if (palautteita === 0) {
     return (
@@ -20,48 +25,53 @@ const Statistiikka = () => {
         <tbody>
           <tr>
             <td>hyvä</td>
-            <td></td>
+            <td>{good}</td>
           </tr>
           <tr>
             <td>neutraali</td>
-            <td></td>
+            <td>{neutral}</td>
           </tr>
           <tr>
             <td>huono</td>
-            <td></td>
+            <td>{bad}</td>
           </tr>
           <tr>
             <td>keskiarvo</td>
-            <td></td>
+            <td>{average}</td>
           </tr>
           <tr>
             <td>positiivisia</td>
-            <td></td>
+            <td>{positiivisia}</td>
           </tr>
         </tbody>
       </table>
 
-      <button>nollaa tilasto</button>
+      <button onClick={e => store.dispatch({type: 'ZERO'})}>nollaa tilasto</button>
     </div >
   )
 }
 
 class App extends React.Component {
-  klik = (nappi) => () => {
 
+  klik = (nappi) => () => {
+    store.dispatch({ type: nappi })
   }
 
   render() {
+    const {good, bad, ok} = store.getState() 
     return (
       <div>
         <h2>anna palautetta</h2>
         <button onClick={this.klik('GOOD')}>hyvä</button>
         <button onClick={this.klik('OK')}>neutraali</button>
         <button onClick={this.klik('BAD')}>huono</button>
-        <Statistiikka />
+        <Statistiikka good={good} bad={bad} neutral={ok}/>
       </div>
     )
   }
 }
 
-export default App;
+export { 
+  App, 
+  store 
+}
