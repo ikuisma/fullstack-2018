@@ -38,7 +38,7 @@ describe('<SimpleBlog/>', () => {
         expect(blogLikes.text()).toContain(`blog has ${blog.likes} likes`)
     })
 
-    it('clicks buttons', () => {
+    it('clicking the button twice calls onClick twice', () => {
         const likeButton = simpleBlog.find('button')
         clickElement(likeButton, 2)
         expect(mockHandler.mock.calls.length).toBe(2)
