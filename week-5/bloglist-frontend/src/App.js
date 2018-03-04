@@ -72,6 +72,7 @@ class Blog extends React.Component {
             <p>{blog.likes} likes</p>
             <button onClick={this.increaseLikes}>like</button>
             <p>Added by {blog.user === undefined ? 'Not available' : blog.user.name }</p>
+            <button onClick={this.props.onDeleteBlog}>delete</button>
            </div>     
       </div>
     )  
@@ -127,7 +128,6 @@ class App extends React.Component {
 
   componentDidMount() {
     const user = this.loadUserFromLocalStorage()
-    console.log(user)
     if (user !== null) {
       this.setState({ user, username: user.username, password: user.password })
     }
@@ -185,6 +185,19 @@ class App extends React.Component {
     this.setState({blogs: updatedBlogs})
   }
 
+  deleteBlog = (blog) => async () => {
+    try {
+      if (window.confirm(`Delete "${blog.title}" by ${blog.author}?`)) {
+        await blogService.destroy(blog)
+        this.setState({
+          blogs: this.state.blogs.filter(b => b._id !== blog._id)
+        })
+      }
+    } catch (exception) {
+      console.log(exception)
+    }
+  }
+
   displayMessage = (message) => {
     this.setState({
       error: message,
@@ -217,7 +230,7 @@ class App extends React.Component {
           <CreateForm onSuccess={this.addBlogToList}/>
         </Toggleable>
         {this.state.blogs.sort((blogOne,blogTwo) => blogTwo.likes - blogOne.likes).map(blog => 
-          <Blog key={blog._id} blog={blog} onUpdateBlog={this.addUpdatedBlog}/>
+          <Blog key={blog._id} blog={blog} onUpdateBlog={this.addUpdatedBlog} onDeleteBlog={this.deleteBlog(blog)}/>
         )}
       </div>
     )
