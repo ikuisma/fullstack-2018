@@ -1,4 +1,5 @@
 import React from 'react'
+import counterReducer from './reducer'
 
 const Statistiikka = () => {
   const palautteita = 0
