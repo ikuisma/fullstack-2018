@@ -108,7 +108,8 @@ class App extends React.Component {
   }
 
   loadUserFromLocalStorage() {
-    const user = JSON.parse(window.localStorage.getItem(localStorageUserKey))
+    const userString = window.localStorage.getItem(localStorageUserKey)
+    const user = userString !== undefined ? JSON.parse(userString) : null
     if (user !== null) {
       blogService.setToken(user.token)
     }
