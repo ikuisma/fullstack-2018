@@ -64,6 +64,7 @@ class Blog extends React.Component {
     }
     const blog = this.props.blog
     const showWhenVisible = {display: this.state.visible ? '' : 'none'}
+    const deleteButton = this.props.showDelete ? <button onClick={this.props.onDeleteBlog}>delete</button> : null
     return (
       <div style={blogStyle}>
            <p onClick={this.toggleVisible}> {blog.title} {blog.author}</p>
@@ -72,7 +73,7 @@ class Blog extends React.Component {
             <p>{blog.likes} likes</p>
             <button onClick={this.increaseLikes}>like</button>
             <p>Added by {blog.user === undefined ? 'Not available' : blog.user.name }</p>
-            <button onClick={this.props.onDeleteBlog}>delete</button>
+            {deleteButton}
            </div>     
       </div>
     )  
@@ -230,7 +231,7 @@ class App extends React.Component {
           <CreateForm onSuccess={this.addBlogToList}/>
         </Toggleable>
         {this.state.blogs.sort((blogOne,blogTwo) => blogTwo.likes - blogOne.likes).map(blog => 
-          <Blog key={blog._id} blog={blog} onUpdateBlog={this.addUpdatedBlog} onDeleteBlog={this.deleteBlog(blog)}/>
+          <Blog key={blog._id} blog={blog} onUpdateBlog={this.addUpdatedBlog} onDeleteBlog={this.deleteBlog(blog)} showDelete={blog.user === undefined || blog.user.username === this.state.user.username}/>
         )}
       </div>
     )
