@@ -1,9 +1,9 @@
 import React from 'react'
-import PropTypes from 'prop-types'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import CreateForm from './components/CreateForm'
 import Blog from './components/Blog'
+import LoginForm from './components/LoginForm'
 
 const localStorageUserKey = 'user'
 
@@ -17,29 +17,6 @@ const Notification = ({message}) => {
   } else {
     return null;
   }
-}
-
-const LoginForm = ({handleChange, handleSubmit, username, password}) => {
-  return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <div>
-          Käyttäjätunnus <input type="text" name="username" value={username} onChange={handleChange}/>
-        </div>
-        <div>
-          Salasana <input type="password" name="password" value={password} onChange={handleChange}/>
-        </div>
-        <button type="submit">Kirjaudu</button>
-      </form>
-    </div>
-  )
-}
-
-LoginForm.propTypes = {
-  handleChange: PropTypes.func.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
-  username: PropTypes.string.isRequired,
-  password: PropTypes.string.isRequired
 }
 
 class Toggleable extends React.Component {
@@ -211,4 +188,4 @@ class App extends React.Component {
   }
 }
 
-export default App;
+export default App
