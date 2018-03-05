@@ -41,4 +41,11 @@ export const anecdoteCreation = (content) => {
     }
 }
 
+export const anecdoteVote = (id) => {
+    return {
+        type: 'VOTE',
+        id
+    }
+}
+
 export default anecdoteReducer
