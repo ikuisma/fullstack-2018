@@ -6,15 +6,6 @@ import { anecdoteVote } from '../reducers/anecdoteReducer'
 
 class AnecdoteList extends React.Component {
     render() {
-        const anecdotes = () => {
-            const filter = this.props.filter
-            const all = this.props.anecdotes
-            if (filter === null) {
-                return all
-            } else {
-                return all.filter(a => a.content.includes(filter))
-            }
-        }
         const onVote = (anecdote) => {
             this.props.anecdoteVote(anecdote.id)
             notificationsService.displayNotification(`You voted '${anecdote.content}'`)
@@ -23,7 +14,7 @@ class AnecdoteList extends React.Component {
             <div>
                 <h2>Anecdotes</h2>
                 <Filter store={this.props.store}/>
-                {anecdotes().sort((a, b) => b.votes - a.votes).map(anecdote =>
+                {this.props.anecdotesToShow.sort((a, b) => b.votes - a.votes).map(anecdote =>
                     <div key={anecdote.id}>
                         <div>
                             {anecdote.content}
@@ -41,10 +32,17 @@ class AnecdoteList extends React.Component {
     }
 }
 
+const anecdotes = (filter, anecdotes) => {
+    if (filter === null) {
+        return anecdotes
+    } else {
+        return anecdotes.filter(a => a.content.includes(filter))
+    }
+}
+
 const mapStateToProps = (state) => {
     return {
-        anecdotes: state.anecdotes,
-        filter: state.filter
+        anecdotesToShow: anecdotes(state.filter, state.anecdotes)
     }
 }
 
