@@ -1,6 +1,5 @@
 import React from 'react'
 import blogService from './services/blogs'
-import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
@@ -12,8 +11,7 @@ import Menu from './components/Menu'
 import { connect } from 'react-redux'
 import { notify } from './reducers/notificationReducer'
 import { initializeUsers } from './reducers/usersReducer'
-
-const localStorageUserKey = 'user'
+import { login, logout, initializeCredentials } from './reducers/loginReducer'
 
 class App extends React.Component {
   constructor(props) {
@@ -31,42 +29,18 @@ class App extends React.Component {
   }
 
   componentDidMount = async () => {
-    const user = this.loadUserFromLocalStorage()
-    if (user !== null) {
-      this.setState({ user, username: user.username, password: user.password })
-    }
+    await this.props.initializeCredentials()
+
+    await this.props.initializeUsers()
     const blogs = await blogService.getAll()
     this.setState({blogs})
-    await this.props.initializeUsers()
-  }
-
-  saveUserToLocalStorage = (user) => {
-    window.localStorage.setItem(localStorageUserKey, JSON.stringify(user))
-  }
-
-  clearUserFromLocalStorage = () => {
-    window.localStorage.setItem(localStorageUserKey, null)
-  }
-
-  loadUserFromLocalStorage() {
-    const userString = window.localStorage.getItem(localStorageUserKey)
-    const user = userString !== undefined ? JSON.parse(userString) : null
-    if (user !== null) {
-      blogService.setToken(user.token)
-    }
-    return user
   }
 
   login = async (event) => {
     event.preventDefault()
     try {
-      const user = await loginService.login({
-        username: this.state.username,
-        password: this.state.password
-      })
-      this.saveUserToLocalStorage(user)
-      blogService.setToken(user.token)
-      this.setState({ user, username: '', password: '' })
+      this.props.login(this.state.username, this.state.password)
+      this.setState({ username: '', password: '' })
     } catch (exception) {
       this.displayMessage('Käyttäjätunnus tai salasana virheellinen! ')
     }
@@ -74,8 +48,7 @@ class App extends React.Component {
 
   logout = (event) => {
     event.preventDefault()
-    this.clearUserFromLocalStorage()
-    this.setState({ user: null, username: '', password: '' })
+    this.props.logout()
   }
 
   addBlogToList = (newBlog) => {
@@ -118,7 +91,8 @@ class App extends React.Component {
   blogById = (id) => this.state.blogs.filter(blog => blog._id === id)[0]
 
   render() {
-    if (this.state.user === null) {
+    const user = this.props.user
+    if (user === null) {
       return (
         <div>
           <h2>Kirjaudu sovellukseen</h2>
@@ -138,12 +112,12 @@ class App extends React.Component {
           <div>
             <h2>Blogs</h2>
             <Notification/>
-            <Menu username={this.state.user.name} logout={this.logout}/>
+            <Menu username={user.name} logout={this.logout}/>
             <Route exact path="/" render={() => 
               <BlogList 
                 blogs={this.state.blogs} 
                 addBlogToList={this.addBlogToList} 
-                user={this.state.user}/>
+                user={user}/>
               }
             />
             <Route exact path="/blogs/:id" render={({match, history}) => {
@@ -154,7 +128,7 @@ class App extends React.Component {
                     onUpdateBlog={this.addUpdatedBlog} 
                     onDeleteBlog={this.deleteBlog(blog, history)} 
                     onCreateComment={this.onCreateComment}
-                    user={this.state.user}
+                    user={this.props.user}
                   />
                 )
               }}
@@ -170,13 +144,15 @@ class App extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    users: state.users
+    user: state.login,
+    users: state.users,
+    login: state.login
   }
 }
 
 const ConnectedApp = connect(
   mapStateToProps, 
-  { notify, initializeUsers }
+  { notify, initializeUsers, login, logout, initializeCredentials }
 )(App)
 
 export default ConnectedApp

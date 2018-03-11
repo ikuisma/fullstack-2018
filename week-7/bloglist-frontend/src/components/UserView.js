@@ -1,4 +1,5 @@
 import React from 'react'
+import { connect } from 'react-redux'
 
 const UserView = ({user}) => {
     return !user ? null : (
@@ -11,4 +12,12 @@ const UserView = ({user}) => {
     )
 }
 
-export default UserView
+const mapStateToProps = (state) => {
+  return {
+    users: state.users
+  }
+}
+
+const ConnectedUserView = connect(mapStateToProps)(UserView) 
+
+export default ConnectedUserView
