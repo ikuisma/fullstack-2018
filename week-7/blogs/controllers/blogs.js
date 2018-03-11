@@ -78,4 +78,16 @@ blogsRouter.put('/:id', async (request, response) => {
   }
 })
 
+blogsRouter.post('/:id/comments', async (request, response) => {
+  try {
+    const id = request.params.id
+    let blog = await Blog.findById(id)
+    blog.comments.push(request.body.comment)
+    const updatedBlog = await Blog.findByIdAndUpdate(id, blog, {new: true}).populate('user', {username: 1, name: 1})
+    return response.json(updatedBlog)
+  } catch (exception) {
+    return response.status(400).send({error: 'Something went wrong with the request. '})
+  }
+})
+
 module.exports = blogsRouter
