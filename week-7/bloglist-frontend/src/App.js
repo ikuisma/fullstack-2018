@@ -4,51 +4,10 @@ import loginService from './services/login'
 import CreateForm from './components/CreateForm'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
+import Toggleable from './components/Toggleable'
+import Notification from './components/Notification'
 
 const localStorageUserKey = 'user'
-
-const Notification = ({message}) => {
-  if (message !== null) {
-    return (
-      <div>
-        <h3>{message}</h3>
-      </div>
-    )
-  } else {
-    return null;
-  }
-}
-
-class Toggleable extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      visible: false
-    }
-  }
-
-  toggleVisible = () => {
-    this.setState({
-      visible: !this.state.visible
-    })
-  }
-
-  render() {
-    const hideWhenVisible = {display: this.state.visible ? 'none' : ''}
-    const showWhenVisible = {display: this.state.visible ? '' : 'none'}
-    return (
-      <div>
-        <div style={hideWhenVisible}>
-          <button onClick={this.toggleVisible}>{this.props.buttonLabel}</button>
-        </div>
-        <div  style={showWhenVisible}>
-          {this.props.children}
-          <button onClick={this.toggleVisible}>Cancel</button>
-        </div>
-      </div>
-    )  
-  }
-}
 
 class App extends React.Component {
   constructor(props) {
