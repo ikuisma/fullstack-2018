@@ -1,5 +1,7 @@
 import React from 'react'
-import blogService from '../services/blogs'
+import { connect } from 'react-redux'
+import { increaseLikes, createComment, deleteBlog } from '../reducers/blogReducer'
+import { notify } from '../reducers/notificationReducer'
 
 const CommentList = ({comments}) => (
   <div>
@@ -15,20 +17,23 @@ const CommentForm = ({onSubmit}) => (
 
 class Blog extends React.Component {
 
-    increaseLikes = async () => {
-      let updatedBlog = this.props.blog;
-      updatedBlog.likes += 1;
-      updatedBlog = await blogService.update(updatedBlog);
-      this.props.onUpdateBlog(updatedBlog)
+    onClickLikes = async () => {
+      await this.props.increaseLikes(this.props.blog)
+      this.props.notify(`Voted for blog '${this.props.blog.title}'!`, 5)
     }
 
     submitComment = async (event) => {
       event.preventDefault()
       const comment = event.target.comment.value
       event.target.comment.value = ''
-      const id = this.props.blog._id
-      const updatedBlog = await blogService.createComment(id, comment)
-      this.props.onCreateComment(updatedBlog, comment)
+      await this.props.createComment(comment, this.props.blog)
+      this.props.notify(`Added comment '${comment}'!`, 5)
+    }
+
+    onDeleteBlog = async () => {
+      await this.props.deleteBlog(this.props.blog)
+      this.props.notify(`Blog deleted!`)
+      this.props.history.push('/')
     }
  
     render() {
@@ -37,14 +42,14 @@ class Blog extends React.Component {
         return null
       } else {
         const showDelete = blog.user.username === this.props.user.username
-        const deleteButton = showDelete ? <button onClick={this.props.onDeleteBlog}>delete</button> : null
+        const deleteButton = showDelete ? <button onClick={this.onDeleteBlog}>delete</button> : null
         return (
           <div>
             <h2 className="blog-title"> {blog.title} {blog.author}</h2>
             <div>
               <a href={blog.url}>{blog.url}</a>
               <p>{blog.likes} likes</p>
-              <button onClick={this.increaseLikes}>like</button>
+              <button onClick={this.onClickLikes}>like</button>
               <p>Added by {blog.user === undefined ? 'Not available' : blog.user.name }</p>
               {deleteButton}
               <h3>Comments</h3>
@@ -55,6 +60,12 @@ class Blog extends React.Component {
         )
       }
     }
-  }
-  
-export default Blog
+}
+
+const mapStateToProps = (state) => {
+  return {user: state.login}
+}
+
+const ConnectedBlog = connect(mapStateToProps, { increaseLikes, notify, createComment, deleteBlog })(Blog)
+
+export default ConnectedBlog

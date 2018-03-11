@@ -1,5 +1,7 @@
 import React from 'react'
-import blogService from '../services/blogs'
+import { connect } from 'react-redux'
+import { createBlog } from '../reducers/blogReducer'
+import { notify } from '../reducers/notificationReducer'
 
 class CreateForm extends React.Component {
     constructor(props){
@@ -18,13 +20,9 @@ class CreateForm extends React.Component {
     submitBlog = async (event) => {
         event.preventDefault()
         const {title, author, url} = this.state
-        const newBlog = await blogService.create({title, author, url})
-        this.setState({
-            title: '',
-            author: '',
-            url: ''
-        })
-        this.props.onSuccess(newBlog)
+        await this.props.createBlog({ title, author, url })
+        await this.props.notify(`Blog ${title} added!`, 5)
+        this.setState({ title: '', author: '', url: '' })
     }
     
     render() {
@@ -45,4 +43,10 @@ class CreateForm extends React.Component {
     }
 }
 
-export default CreateForm
+const mapStateToProps = (state) => {
+    return {}
+}
+
+const ConnectedCreateForm = connect(mapStateToProps, { createBlog, notify })(CreateForm)
+
+export default ConnectedCreateForm
