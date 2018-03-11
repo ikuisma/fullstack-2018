@@ -1,6 +1,19 @@
 import React from 'react'
 import blogService from '../services/blogs'
 
+const CommentList = ({comments}) => (
+  <div>
+    <h3>Comments</h3>
+    <ul>{comments.map((comment, index) => <li key={index}>{comment}</li>)}</ul>
+  </div>
+)
+
+const CommentForm = ({onSubmit}) => (
+  <form onSubmit={onSubmit}>
+    <input type="text"/><input type="submit"/>
+  </form>
+)
+
 class Blog extends React.Component {
 
     increaseLikes = async () => {
@@ -9,6 +22,10 @@ class Blog extends React.Component {
       updatedBlog = await blogService.update(updatedBlog);
       this.props.onUpdateBlog(updatedBlog)
     }
+
+    submitComment = async (event) => {
+      event.preventDefault()
+    } 
  
     render() {
       const blog = this.props.blog
@@ -26,6 +43,8 @@ class Blog extends React.Component {
               <button onClick={this.increaseLikes}>like</button>
               <p>Added by {blog.user === undefined ? 'Not available' : blog.user.name }</p>
               {deleteButton}
+              <CommentList comments={blog.comments}/>
+              <CommentForm onSubmit={this.submitComment}/>
             </div>
           </div>
         )

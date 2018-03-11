@@ -15,8 +15,8 @@ const localStorageUserKey = 'user'
 
 const Menu = ({username, logout}) => (
   <div>
-    <Link exact to='/'>blogs</Link>  &nbsp;
-    <Link exact to='/users'>users</Link>  &nbsp;
+    <Link to='/'>blogs</Link>  &nbsp;
+    <Link to='/users'>users</Link>  &nbsp;
     {username} logged in.  &nbsp;
     <button onClick={logout}>Logout</button>     
   </div>
