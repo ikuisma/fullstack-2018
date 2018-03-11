@@ -6,6 +6,8 @@ import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import Toggleable from './components/Toggleable'
 import Notification from './components/Notification'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
+import usersService from './services/users'
 
 const localStorageUserKey = 'user'
 
@@ -14,6 +16,7 @@ class App extends React.Component {
     super(props)
     this.state = {
       blogs: [],
+      users: [],
       user: null,
       username: '',
       password: '',
@@ -25,14 +28,14 @@ class App extends React.Component {
     this.setState({ [event.target.name]: event.target.value })
   }
 
-  componentDidMount() {
+  componentDidMount = async () => {
     const user = this.loadUserFromLocalStorage()
     if (user !== null) {
       this.setState({ user, username: user.username, password: user.password })
     }
-    blogService.getAll().then(blogs =>
-      this.setState({ blogs })
-    )
+    const blogs = await blogService.getAll()
+    const users = await usersService.getAll()
+    this.setState({blogs, users})
   }
 
   saveUserToLocalStorage = (user) => {
@@ -107,6 +110,47 @@ class App extends React.Component {
     }, 5000)
   }
 
+  blogList = () => (
+    <div>
+      <h2>Create new blog</h2>
+      <Toggleable buttonLabel="New blog">
+        <CreateForm onSuccess={this.addBlogToList}/>
+      </Toggleable>
+      {this.state.blogs.sort((blogOne,blogTwo) => blogTwo.likes - blogOne.likes).map(blog => 
+        <Blog 
+          key={blog._id} 
+          blog={blog} 
+          onUpdateBlog={this.addUpdatedBlog} onDeleteBlog={this.deleteBlog(blog)} 
+          showDelete={blog.user === undefined || blog.user.username === this.state.user.username}
+        />
+      )}
+    </div>
+  )
+
+  userList = () => (
+    <div>
+      <h2>Users</h2>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>blogs added</th>
+          </tr>
+        </thead>
+        <tbody>
+          {this.state.users.map((user) => {
+            return (
+              <tr key={user.id}>
+                <td>{user.name}</td>
+                <td>{user.blogs.length}</td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+    </div>
+  )
+
   render() {
     if (this.state.user === null) {
       return (
@@ -124,24 +168,18 @@ class App extends React.Component {
     }
     return (
       <div>
-        <h2>Blogs</h2>
-        <Notification message={this.state.error}/>
-        <div>
-          {this.state.user.name} logged in.
-          <button onClick={this.logout}>Logout</button>        
-        </div>
-        <h2>Create new blog</h2>
-        <Toggleable buttonLabel="New blog">
-          <CreateForm onSuccess={this.addBlogToList}/>
-        </Toggleable>
-        {this.state.blogs.sort((blogOne,blogTwo) => blogTwo.likes - blogOne.likes).map(blog => 
-          <Blog 
-            key={blog._id} 
-            blog={blog} 
-            onUpdateBlog={this.addUpdatedBlog} onDeleteBlog={this.deleteBlog(blog)} 
-            showDelete={blog.user === undefined || blog.user.username === this.state.user.username}
-          />
-        )}
+        <Router>
+          <div>
+            <h2>Blogs</h2>
+            <Notification message={this.state.error}/>
+            <div>
+              {this.state.user.name} logged in.
+              <button onClick={this.logout}>Logout</button>        
+            </div>
+            <Route exact path="/" render={this.blogList}/>
+            <Route exact path="/users" render={this.userList}/>
+          </div>
+        </Router>
       </div>
     )
   }
