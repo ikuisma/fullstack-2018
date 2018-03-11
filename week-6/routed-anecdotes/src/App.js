@@ -1,6 +1,6 @@
 import React from 'react'
 import { BrowserRouter as Router, Link, NavLink, Route } from 'react-router-dom'
-import { Container, Menu, Table, Grid, Image } from 'semantic-ui-react'
+import { Container, Menu, Table, Grid, Image, Form, Button } from 'semantic-ui-react'
 
 const MenuLink = ({route, title}) => {
   const activeStyle = {
@@ -99,22 +99,22 @@ class CreateNew extends React.Component {
   render() {
     return(
       <div>
-        <h2>create a new anecdote</h2>
-        <form onSubmit={this.handleSubmit}>
-          <div>
-            content 
+        <h2>Create a new anecdote</h2>
+        <Form onSubmit={this.handleSubmit}>
+          <Form.Field>
+            <label>Content</label> 
             <input name='content' value={this.state.content} onChange={this.handleChange} />
-          </div>
-          <div>
-            author
+          </Form.Field>
+          <Form.Field>
+            <label>Author</label>
             <input name='author' value={this.state.author} onChange={this.handleChange} />
-          </div>
-          <div>
-            url for more info
+          </Form.Field>
+          <Form.Field>
+            <label>Url for more info</label>
             <input name='info' value={this.state.info} onChange={this.handleChange} />
-          </div> 
-          <button>create</button>
-        </form>
+          </Form.Field> 
+          <Button fluid>Create</Button>
+        </Form>
       </div>  
     )
 
