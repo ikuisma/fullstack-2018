@@ -1,11 +1,23 @@
 import React from 'react'
-import { BrowserRouter as Router, Link, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Link, NavLink, Route } from 'react-router-dom'
+
+const MenuLink = ({route, title}) => {
+  const activeStyle = {
+    fontStyle: 'italic'
+  }
+  const style = {
+    padding: '.25em'
+  }
+  return (
+    <NavLink exact style={style} activeStyle={activeStyle} to={route}>{title}</NavLink>
+  )
+}
 
 const Menu = () => (
-  <div>    
-    <Link to='/'>anecdotes</Link>&nbsp;
-    <Link to='/create'>create new</Link>&nbsp;
-    <Link to='/about'>about</Link>&nbsp;
+  <div>
+    <MenuLink route='/' title='anecdotes'/>
+    <MenuLink route='/create' title='create new'/>
+    <MenuLink route='/about' title='about'/>
   </div>
 )
 
