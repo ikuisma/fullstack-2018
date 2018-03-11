@@ -9,18 +9,11 @@ import UserView from './components/UserView'
 import UserList from './components/UserList'
 import BlogList from './components/BlogList'
 import Blog from './components/Blog'
-import { Link } from 'react-router-dom'
+import Menu from './components/Menu'
+import { connect } from 'react-redux'
+import { notify } from './reducers/notificationReducer'
 
 const localStorageUserKey = 'user'
-
-const Menu = ({username, logout}) => (
-  <div>
-    <Link to='/'>blogs</Link>  &nbsp;
-    <Link to='/users'>users</Link>  &nbsp;
-    {username} logged in.  &nbsp;
-    <button onClick={logout}>Logout</button>     
-  </div>
-)
 
 class App extends React.Component {
   constructor(props) {
@@ -30,8 +23,7 @@ class App extends React.Component {
       users: [],
       user: null,
       username: '',
-      password: '',
-      error: null
+      password: ''
     }
   }
 
@@ -115,16 +107,11 @@ class App extends React.Component {
 
   onCreateComment = (blog, comment) => {
     this.addUpdatedBlog(blog)
-    this.displayMessage(`Comment '${comment}' added!`)
+    this.displayMessage(`Comment '${comment}' added!`) 
   }
 
   displayMessage = (message) => {
-    this.setState({
-      error: message,
-    })
-    setTimeout(() => {
-      this.setState({ error: null })
-    }, 5000)
+    this.props.notify(message, 5)
   }
 
   userById = (id) => this.state.users.filter(user => user.id === id)[0]
@@ -136,7 +123,7 @@ class App extends React.Component {
       return (
         <div>
           <h2>Kirjaudu sovellukseen</h2>
-          <Notification message={this.state.error}/>
+          <Notification/>
           <LoginForm 
             handleChange={this.handleLoginFieldChange} 
             handleSubmit={this.login} 
@@ -151,7 +138,7 @@ class App extends React.Component {
         <Router>
           <div>
             <h2>Blogs</h2>
-            <Notification message={this.state.error}/>
+            <Notification/>
             <Menu username={this.state.user.name} logout={this.logout}/>
             <Route exact path="/" render={() => 
               <BlogList 
@@ -182,4 +169,13 @@ class App extends React.Component {
   }
 }
 
-export default App
+const mapStateToProps = (state) => {
+  return {}
+}
+
+const ConnectedApp = connect(
+  mapStateToProps, 
+  { notify }
+)(App)
+
+export default ConnectedApp
