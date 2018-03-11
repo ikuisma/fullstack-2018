@@ -1,15 +1,14 @@
 import React from 'react'
 import blogService from './services/blogs'
 import loginService from './services/login'
-import CreateForm from './components/CreateForm'
-import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
-import Toggleable from './components/Toggleable'
 import Notification from './components/Notification'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import usersService from './services/users'
 import UserView from './components/UserView'
 import UserList from './components/UserList'
+import BlogList from './components/BlogList'
+import Blog from './components/Blog'
 
 const localStorageUserKey = 'user'
 
@@ -90,13 +89,14 @@ class App extends React.Component {
     this.setState({blogs: updatedBlogs})
   }
 
-  deleteBlog = (blog) => async () => {
+  deleteBlog = (blog, history) => async () => {
     try {
       if (window.confirm(`Delete "${blog.title}" by ${blog.author}?`)) {
         await blogService.destroy(blog)
         this.setState({
           blogs: this.state.blogs.filter(b => b._id !== blog._id)
         })
+        history.push('/')
       }
     } catch (exception) {
       console.log(exception)
@@ -112,24 +112,9 @@ class App extends React.Component {
     }, 5000)
   }
 
-  blogList = () => (
-    <div>
-      <h2>Create new blog</h2>
-      <Toggleable buttonLabel="New blog">
-        <CreateForm onSuccess={this.addBlogToList}/>
-      </Toggleable>
-      {this.state.blogs.sort((blogOne,blogTwo) => blogTwo.likes - blogOne.likes).map(blog => 
-        <Blog 
-          key={blog._id} 
-          blog={blog} 
-          onUpdateBlog={this.addUpdatedBlog} onDeleteBlog={this.deleteBlog(blog)} 
-          showDelete={blog.user === undefined || blog.user.username === this.state.user.username}
-        />
-      )}
-    </div>
-  )
-
   userById = (id) => this.state.users.filter(user => user.id === id)[0]
+
+  blogById = (id) => this.state.blogs.filter(blog => blog._id === id)[0]
 
   render() {
     if (this.state.user === null) {
@@ -156,9 +141,27 @@ class App extends React.Component {
               {this.state.user.name} logged in.
               <button onClick={this.logout}>Logout</button>        
             </div>
-            <Route exact path="/" render={this.blogList}/>
-            <Route exact path="/users" render={() => <UserList users={this.state.users} />}/>
-            <Route exact path="/users/:id" render={({match}) => <UserView user={this.userById(match.params.id)} />}/>
+            <Route exact path="/" render={() => 
+              <BlogList 
+                blogs={this.state.blogs} 
+                addBlogToList={this.addBlogToList} 
+                user={this.state.user}/>
+              }
+            />
+            <Route exact path="/blogs/:id" render={({match, history}) => {
+                const blog = this.blogById(match.params.id)
+                return (
+                  <Blog 
+                    blog={blog} 
+                    onUpdateBlog={this.addUpdatedBlog} 
+                    onDeleteBlog={this.deleteBlog(blog, history)} 
+                    user={this.state.user}
+                  />
+                )
+              }}
+            />
+            <Route exact path="/users" render={() => <UserList users={this.state.users}/>}/>
+            <Route exact path="/users/:id" render={({match}) => <UserView user={this.userById(match.params.id)}/>}/>
           </div>
         </Router>
       </div>
