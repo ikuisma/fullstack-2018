@@ -1,5 +1,6 @@
 import React from 'react'
 import { BrowserRouter as Router, Link, NavLink, Route } from 'react-router-dom'
+import { Container, Menu } from 'semantic-ui-react'
 
 const MenuLink = ({route, title}) => {
   const activeStyle = {
@@ -9,16 +10,18 @@ const MenuLink = ({route, title}) => {
     padding: '.25em'
   }
   return (
-    <NavLink exact style={style} activeStyle={activeStyle} to={route}>{title}</NavLink>
+    <Menu.Item link>
+      <NavLink exact style={style} activeStyle={activeStyle} to={route}>{title}</NavLink>
+    </Menu.Item>
   )
 }
 
-const Menu = () => (
-  <div>
+const AppMenu = () => (
+  <Menu>
     <MenuLink route='/' title='anecdotes'/>
     <MenuLink route='/create' title='create new'/>
     <MenuLink route='/about' title='about'/>
-  </div>
+  </Menu>
 )
 
 const AnecdoteList = ({ anecdotes }) => (
@@ -189,20 +192,20 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
-      <Router>
-        <div>
-          <h1>Software anecdotes</h1>
-          <Menu/>
-          <Notification content={this.state.notification}/>
-          <Route exact path="/" render={() => <AnecdoteList  anecdotes={this.state.anecdotes}/>}/>
-          <Route exact path="/create" render={({history}) => <CreateNew addNew={this.addNew} history={history} notify={this.notify}/>}/>
-          <Route exact path="/about" render={() => <About/>}/>
-          <Route exact path="/anecdotes/:id" render={({match}) => <Anecdote anecdote={this.anecdoteById(match.params.id)}/>}/>
-          <Footer />
-        </div>
-      </Router>
-      </div>
+      <Container>
+        <Router>
+          <div>
+            <h1>Software anecdotes</h1>
+            <AppMenu/>
+            <Notification content={this.state.notification}/>
+            <Route exact path="/" render={() => <AnecdoteList  anecdotes={this.state.anecdotes}/>}/>
+            <Route exact path="/create" render={({history}) => <CreateNew addNew={this.addNew} history={history} notify={this.notify}/>}/>
+            <Route exact path="/about" render={() => <About/>}/>
+            <Route exact path="/anecdotes/:id" render={({match}) => <Anecdote anecdote={this.anecdoteById(match.params.id)}/>}/>
+            <Footer />
+          </div>
+        </Router>
+      </Container>
     );
   }
 }
