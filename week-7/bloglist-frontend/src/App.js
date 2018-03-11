@@ -24,23 +24,10 @@ class App extends React.Component {
     }
   }
 
-  handleLoginFieldChange = (event) => {
-    this.setState({ [event.target.name]: event.target.value })
-  }
-
   componentDidMount = async () => {
     await this.props.initializeCredentials()
     await this.props.initializeBlogs()
     await this.props.initializeUsers()
-  }
-
-  login = async (event) => {
-    event.preventDefault()
-    try {
-      this.props.login(this.state.username, this.state.password)
-      this.setState({ username: '', password: '' })
-    } catch (exception) {
-    }
   }
 
   logout = (event) => {
@@ -59,12 +46,7 @@ class App extends React.Component {
         <div>
           <h2>Kirjaudu sovellukseen</h2>
           <Notification/>
-          <LoginForm 
-            handleChange={this.handleLoginFieldChange} 
-            handleSubmit={this.login} 
-            username={this.state.username}
-            password={this.state.password}
-          />
+          <LoginForm/>
         </div>
       )
     }
