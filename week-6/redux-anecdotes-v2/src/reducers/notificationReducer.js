@@ -22,12 +22,13 @@ export const clearNotification = () => {
     }
 }
 
-export const notify = (message, timeout) => {
+export const notify = (message, seconds) => {
     return async (dispatch) => {
         dispatch(createNotification(message))
+        const millis = seconds * 1000
         setTimeout(() => {
             dispatch(clearNotification())
-        }, timeout)
+        }, millis)
     }
 }
 

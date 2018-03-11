@@ -8,7 +8,7 @@ class AnecdoteList extends React.Component {
     render() {
         const onVote = async (anecdote) => {
             await this.props.voteForAnecdote(anecdote)
-            await this.props.notify(`You voted '${anecdote.content}'`, 5000)
+            await this.props.notify(`You voted '${anecdote.content}'`, 5)
         }
         return (
             <div>
