@@ -103,13 +103,23 @@ const Anecdote = ({anecdote}) => (
   </div>
 )
 
-const Notification = ({content}) => (
-  content !== '' ? (
-      <div>
-        <h3>{content}</h3>
-      </div>
-  ) : null
-)
+const Notification = ({content}) => {
+  const style = {
+    margin: '.5em',    
+    padding: '.5em',
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderColor: 'green',
+    borderRadius: '5px',
+    color: 'green'
+  }
+  return !content ? null : (
+    <div>
+      <p style={style}>{content}</p>
+    </div>
+  )
+}
+
 
 class App extends React.Component {
   constructor() {
