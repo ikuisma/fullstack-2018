@@ -3,14 +3,13 @@ import blogService from '../services/blogs'
 
 const CommentList = ({comments}) => (
   <div>
-    <h3>Comments</h3>
     <ul>{comments.map((comment, index) => <li key={index}>{comment}</li>)}</ul>
   </div>
 )
 
 const CommentForm = ({onSubmit}) => (
   <form onSubmit={onSubmit}>
-    <input type="text"/><input type="submit"/>
+    <input name="comment" type="text"/><input type="submit"/>
   </form>
 )
 
@@ -25,7 +24,12 @@ class Blog extends React.Component {
 
     submitComment = async (event) => {
       event.preventDefault()
-    } 
+      const comment = event.target.comment.value
+      event.target.comment.value = ''
+      const id = this.props.blog._id
+      const updatedBlog = await blogService.createComment(id, comment)
+      this.props.onCreateComment(updatedBlog, comment)
+    }
  
     render() {
       const blog = this.props.blog
@@ -43,8 +47,9 @@ class Blog extends React.Component {
               <button onClick={this.increaseLikes}>like</button>
               <p>Added by {blog.user === undefined ? 'Not available' : blog.user.name }</p>
               {deleteButton}
-              <CommentList comments={blog.comments}/>
+              <h3>Comments</h3>
               <CommentForm onSubmit={this.submitComment}/>
+              <CommentList comments={blog.comments}/>
             </div>
           </div>
         )

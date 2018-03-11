@@ -113,6 +113,11 @@ class App extends React.Component {
     }
   }
 
+  onCreateComment = (blog, comment) => {
+    this.addUpdatedBlog(blog)
+    this.displayMessage(`Comment '${comment}' added!`)
+  }
+
   displayMessage = (message) => {
     this.setState({
       error: message,
@@ -162,6 +167,7 @@ class App extends React.Component {
                     blog={blog} 
                     onUpdateBlog={this.addUpdatedBlog} 
                     onDeleteBlog={this.deleteBlog(blog, history)} 
+                    onCreateComment={this.onCreateComment}
                     user={this.state.user}
                   />
                 )
