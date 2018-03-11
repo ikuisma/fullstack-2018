@@ -57,11 +57,11 @@ blogsRouter.delete('/:id', authenticate, async (request, response) => {
     const user = request.user
     const id = request.params.id
     const blog = await Blog.findById(id)
-    if (blog.user === user.id || !blog.user) {
+    if (!blog.user || String(blog.user) === String(user._id) ) {
       await Blog.findByIdAndRemove(id)
       return response.status(204).end()
     } else {
-      return response.status(401).send({ error: 'You do not have acceess to this resource. '})
+      return response.status(401).send({ error: 'You do not have access to this resource. '})
     }
   } catch (exception) {
     return response.status(400).send({error: 'Malformatted id. '})
