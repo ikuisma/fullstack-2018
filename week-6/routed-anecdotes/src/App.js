@@ -64,9 +64,11 @@ const About = () => (
 
 const Footer = () => (
   <div>
-    Anecdote app for <a href='https://courses.helsinki.fi/fi/TKT21009/121540749'>Full Stack -sovelluskehitys</a>.
+    <Header textAlign="center" as="h6">
+      Anecdote app for <a href='https://courses.helsinki.fi/fi/TKT21009/121540749'>Full Stack -sovelluskehitys</a>.
 
-    See <a href='https://github.com/mluukkai/routed-anecdotes'>https://github.com/mluukkai/routed-anecdotes</a> for the source code. 
+      See <a href='https://github.com/mluukkai/routed-anecdotes'>https://github.com/mluukkai/routed-anecdotes</a> for the source code. 
+    </Header>
   </div>
 )
 
@@ -173,7 +175,7 @@ class App extends React.Component {
           id: '2'
         }
       ],
-      notification: 'Test message'
+      notification: ''
     } 
   }
 
