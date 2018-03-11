@@ -4,7 +4,6 @@ import loginService from './services/login'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
-import usersService from './services/users'
 import UserView from './components/UserView'
 import UserList from './components/UserList'
 import BlogList from './components/BlogList'
@@ -12,6 +11,7 @@ import Blog from './components/Blog'
 import Menu from './components/Menu'
 import { connect } from 'react-redux'
 import { notify } from './reducers/notificationReducer'
+import { initializeUsers } from './reducers/usersReducer'
 
 const localStorageUserKey = 'user'
 
@@ -20,7 +20,6 @@ class App extends React.Component {
     super(props)
     this.state = {
       blogs: [],
-      users: [],
       user: null,
       username: '',
       password: ''
@@ -37,8 +36,8 @@ class App extends React.Component {
       this.setState({ user, username: user.username, password: user.password })
     }
     const blogs = await blogService.getAll()
-    const users = await usersService.getAll()
-    this.setState({blogs, users})
+    this.setState({blogs})
+    await this.props.initializeUsers()
   }
 
   saveUserToLocalStorage = (user) => {
@@ -114,7 +113,7 @@ class App extends React.Component {
     this.props.notify(message, 5)
   }
 
-  userById = (id) => this.state.users.filter(user => user.id === id)[0]
+  userById = (id) => this.props.users.filter(user => user.id === id)[0]
 
   blogById = (id) => this.state.blogs.filter(blog => blog._id === id)[0]
 
@@ -160,7 +159,7 @@ class App extends React.Component {
                 )
               }}
             />
-            <Route exact path="/users" render={() => <UserList users={this.state.users}/>}/>
+            <Route exact path="/users" render={() => <UserList/>}/>
             <Route exact path="/users/:id" render={({match}) => <UserView user={this.userById(match.params.id)}/>}/>
           </div>
         </Router>
@@ -170,12 +169,14 @@ class App extends React.Component {
 }
 
 const mapStateToProps = (state) => {
-  return {}
+  return {
+    users: state.users
+  }
 }
 
 const ConnectedApp = connect(
   mapStateToProps, 
-  { notify }
+  { notify, initializeUsers }
 )(App)
 
 export default ConnectedApp
