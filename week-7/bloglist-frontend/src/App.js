@@ -8,6 +8,8 @@ import Toggleable from './components/Toggleable'
 import Notification from './components/Notification'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import usersService from './services/users'
+import UserView from './components/UserView'
+import UserList from './components/UserList'
 
 const localStorageUserKey = 'user'
 
@@ -127,29 +129,7 @@ class App extends React.Component {
     </div>
   )
 
-  userList = () => (
-    <div>
-      <h2>Users</h2>
-      <table>
-        <thead>
-          <tr>
-            <th></th>
-            <th>blogs added</th>
-          </tr>
-        </thead>
-        <tbody>
-          {this.state.users.map((user) => {
-            return (
-              <tr key={user.id}>
-                <td>{user.name}</td>
-                <td>{user.blogs.length}</td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
-    </div>
-  )
+  userById = (id) => this.state.users.filter(user => user.id === id)[0]
 
   render() {
     if (this.state.user === null) {
@@ -177,7 +157,8 @@ class App extends React.Component {
               <button onClick={this.logout}>Logout</button>        
             </div>
             <Route exact path="/" render={this.blogList}/>
-            <Route exact path="/users" render={this.userList}/>
+            <Route exact path="/users" render={() => <UserList users={this.state.users} />}/>
+            <Route exact path="/users/:id" render={({match}) => <UserView user={this.userById(match.params.id)} />}/>
           </div>
         </Router>
       </div>
