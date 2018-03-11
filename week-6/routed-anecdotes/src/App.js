@@ -1,10 +1,11 @@
 import React from 'react'
+import {BrowserRouter as Router, Link, Route} from 'react-router-dom'
 
 const Menu = () => (
   <div>    
-    <a href='#'>anecdotes</a>&nbsp;
-    <a href='#'>create new</a>&nbsp;
-    <a href='#'>about</a>&nbsp;
+    <Link to='/'>anecdotes</Link>&nbsp;
+    <Link to='/create'>create new</Link>&nbsp;
+    <Link to='/about'>about</Link>&nbsp;
   </div>
 )
 
@@ -61,6 +62,11 @@ class CreateNew extends React.Component {
       author: this.state.author,
       info: this.state.info,
       votes: 0
+    })
+    this.setState({
+      content: '',
+      author: '',
+      info: ''
     })
   }
 
@@ -138,12 +144,16 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <h1>Software anecdotes</h1>
-          <Menu />
-          <AnecdoteList anecdotes={this.state.anecdotes} />
-          <About />      
-          <CreateNew addNew={this.addNew}/>
-        <Footer />
+      <Router>
+        <div>
+          <h1>Software anecdotes</h1>
+          <Menu/>
+          <Route exact path="/" render={() => <AnecdoteList  anecdotes={this.state.anecdotes}/>}/>
+          <Route exact path="/create" render={() => <CreateNew addNew={this.addNew}/>}/>
+          <Route exact path = "/about" render={() => <About/>}/>
+          <Footer />
+        </div>
+      </Router>
       </div>
     );
   }
