@@ -22,4 +22,13 @@ export const clearNotification = () => {
     }
 }
 
+export const notify = (message, timeout) => {
+    return async (dispatch) => {
+        dispatch(createNotification(message))
+        setTimeout(() => {
+            dispatch(clearNotification())
+        }, timeout)
+    }
+}
+
 export default notificationReducer

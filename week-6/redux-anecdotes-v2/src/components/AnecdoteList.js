@@ -1,14 +1,14 @@
 import React from 'react'
-import notificationsService from '../services/notifications'
 import Filter from './Filter'
 import { connect } from 'react-redux' 
 import { voteForAnecdote } from '../reducers/anecdoteReducer'
+import { notify } from '../reducers/notificationReducer'
 
 class AnecdoteList extends React.Component {
     render() {
         const onVote = async (anecdote) => {
             await this.props.voteForAnecdote(anecdote)
-            notificationsService.displayNotification(`You voted '${anecdote.content}'`)
+            await this.props.notify(`You voted '${anecdote.content}'`, 5000)
         }
         return (
             <div>
@@ -43,4 +43,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps, { voteForAnecdote })(AnecdoteList)
+export default connect(mapStateToProps, { voteForAnecdote, notify })(AnecdoteList)

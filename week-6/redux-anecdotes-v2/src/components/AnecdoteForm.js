@@ -1,6 +1,6 @@
 import React from 'react'
 import { createAnecdote } from '../reducers/anecdoteReducer'
-import notificationService from '../services/notifications'
+import { notify } from '../reducers/notificationReducer'
 import { connect } from 'react-redux'
 
 class AnecdoteForm extends React.Component {
@@ -9,7 +9,7 @@ class AnecdoteForm extends React.Component {
       const content = e.target.anecdote.value
       e.target.anecdote.value = ''
       await this.props.createAnecdote({content})
-      notificationService.displayNotification(`New anecdote '${content}' added. `)
+      await this.props.notify(`New anecdote '${content}' added. `, 5000)
   }
   render() {
       return (
@@ -24,4 +24,4 @@ class AnecdoteForm extends React.Component {
   }
 }
 
-export default connect(null, { createAnecdote })(AnecdoteForm)
+export default connect(null, { createAnecdote, notify })(AnecdoteForm)
