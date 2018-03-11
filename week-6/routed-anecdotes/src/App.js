@@ -1,6 +1,6 @@
 import React from 'react'
 import { BrowserRouter as Router, Link, NavLink, Route } from 'react-router-dom'
-import { Container, Menu, Table, Grid, Image, Form, Button } from 'semantic-ui-react'
+import { Container, Menu, Table, Grid, Image, Form, Button, Divider, Header } from 'semantic-ui-react'
 
 const MenuLink = ({route, title}) => {
   const activeStyle = {
@@ -146,6 +146,20 @@ const Notification = ({content}) => {
   )
 }
 
+const PageTitle = ({text}) => {
+  const style={
+    paddingTop: '1em'
+  }
+  return (
+    <div style={style}>
+      <Header as='h1' textAlign='center'>
+        <Header.Content>
+          {text}
+        </Header.Content>
+      </Header>
+    </div>
+  )
+}
 
 class App extends React.Component {
   constructor() {
@@ -206,14 +220,16 @@ class App extends React.Component {
       <Container>
         <Router>
           <div>
-            <h1>Software anecdotes</h1>
+            <PageTitle text="Software anecdotes"/>
             <AppMenu/>
+            <Divider/>
             <Notification content={this.state.notification}/>
             <Route exact path="/" render={() => <AnecdoteList  anecdotes={this.state.anecdotes}/>}/>
             <Route exact path="/create" render={({history}) => <CreateNew addNew={this.addNew} history={history} notify={this.notify}/>}/>
             <Route exact path="/about" render={() => <About/>}/>
             <Route exact path="/anecdotes/:id" render={({match}) => <Anecdote anecdote={this.anecdoteById(match.params.id)}/>}/>
-            <Footer />
+            <Divider/>
+            <Footer/>
           </div>
         </Router>
       </Container>
