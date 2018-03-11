@@ -1,6 +1,6 @@
 import React from 'react'
 import { BrowserRouter as Router, Link, NavLink, Route } from 'react-router-dom'
-import { Container, Menu, Table, Grid, Image, Form, Button, Divider, Header } from 'semantic-ui-react'
+import { Container, Menu, Table, Grid, Image, Form, Button, Divider, Header, Message } from 'semantic-ui-react'
 
 const MenuLink = ({route, title}) => {
   const activeStyle = {
@@ -130,19 +130,10 @@ const Anecdote = ({anecdote}) => (
 )
 
 const Notification = ({content}) => {
-  const style = {
-    margin: '.5em',    
-    padding: '.5em',
-    borderWidth: '1px',
-    borderStyle: 'solid',
-    borderColor: 'green',
-    borderRadius: '5px',
-    color: 'green'
-  }
   return !content ? null : (
-    <div>
-      <p style={style}>{content}</p>
-    </div>
+    <Message positive>
+      <Message.Header>{content}</Message.Header>
+    </Message>
   )
 }
 
@@ -182,7 +173,7 @@ class App extends React.Component {
           id: '2'
         }
       ],
-      notification: ''
+      notification: 'Test message'
     } 
   }
 
