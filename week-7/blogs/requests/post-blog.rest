@@ -1,0 +1,9 @@
+POST http://localhost:3003/api/blogs
+content-type: application/json
+
+{
+    "title": "Tabs Versus Spaces — The Super Duper Definitive Guide",
+    "author": "Devin Developer",
+    "url": "www.google.com",
+    "likes": 5
+}
