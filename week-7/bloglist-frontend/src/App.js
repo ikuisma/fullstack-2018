@@ -9,8 +9,18 @@ import UserView from './components/UserView'
 import UserList from './components/UserList'
 import BlogList from './components/BlogList'
 import Blog from './components/Blog'
+import { Link } from 'react-router-dom'
 
 const localStorageUserKey = 'user'
+
+const Menu = ({username, logout}) => (
+  <div>
+    <Link exact to='/'>blogs</Link>  &nbsp;
+    <Link exact to='/users'>users</Link>  &nbsp;
+    {username} logged in.  &nbsp;
+    <button onClick={logout}>Logout</button>     
+  </div>
+)
 
 class App extends React.Component {
   constructor(props) {
@@ -137,10 +147,7 @@ class App extends React.Component {
           <div>
             <h2>Blogs</h2>
             <Notification message={this.state.error}/>
-            <div>
-              {this.state.user.name} logged in.
-              <button onClick={this.logout}>Logout</button>        
-            </div>
+            <Menu username={this.state.user.name} logout={this.logout}/>
             <Route exact path="/" render={() => 
               <BlogList 
                 blogs={this.state.blogs} 
